@@ -260,6 +260,11 @@ function CashierPageNewContent({ variant }: { variant: CashierPageVariant }) {
   const [selectedStallFilter, setSelectedStallFilter] = useState<'All' | string>('All');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+  // Muat ulang member tiap Find Customer dibuka (laporan owner 2026-10-09:
+  // member tidak ditemukan — daftar sebelumnya hanya dimuat sekali saat halaman dibuka).
+  useEffect(() => {
+    if (showCustomerModal) void refetchCustomers();
+  }, [showCustomerModal, refetchCustomers]);
   const [pendingNfcUid, setPendingNfcUid] = useState<string | null>(null);
   const [createMemberPromptUid, setCreateMemberPromptUid] = useState<string | null>(null);
   const [topupPrompt, setTopupPrompt] = useState<{

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { normalizePhoneDigits } from '@/lib/pos/customer-search';
 import { createPgClient } from "@/lib/pg/create-client";
 import { getPosSession } from '@/lib/api/auth';
 
@@ -68,10 +69,15 @@ export async function GET(request: NextRequest) {
       .select(CUSTOMER_SELECT)
       .eq('is_active', true)
       .order('name')
-      .limit(phone || nfcUid ? 1 : 500);
+      // POS memuat seluruh member lalu menyaring di perangkat — batas 500
+      // membuat member di urutan nama > 500 tak pernah ketemu (2026-10-09).
+      .limit(phone || nfcUid ? 1 : 5000);
 
     if (search) {
-      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%,nfc_uid.ilike.%${search}%`);
+      // Nomor diketik 62…/+62…/berspasi → cocokkan juga bentuk 08… yang tersimpan.
+      const digits = normalizePhoneDigits(search);
+      const phoneTerm = digits.length >= 3 && /^[\d\s+()-]+$/.test(search.trim()) ? digits : search;
+      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${phoneTerm}%,nfc_uid.ilike.%${search}%`);
     }
 
     if (phone) {

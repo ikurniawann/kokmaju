@@ -71,6 +71,7 @@ import { CustomizationModal, type SelectedCustomization } from '@/components/pos
 import { MemberPriceText } from '@/components/pos/MemberPriceText';
 import { memberPrice } from '@/lib/pos/member-price';
 import { prefersInputAutoFocus } from '@/lib/pos/input-autofocus';
+import { matchesCustomerQuery } from '@/lib/pos/customer-search';
 import { printThermalReceipt, type ReceiptPayload } from '@/components/pos/PrintReceipt';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -172,6 +173,11 @@ export function ClassicCashierPage() {
   const [customizing, setCustomizing] = useState<SelectedCustomization | null>(null);
   const [showPayment, setShowPayment] = useState(false);
   const [showCustomer, setShowCustomer] = useState(false);
+  // Muat ulang member tiap dialog dibuka — member yang didaftarkan setelah
+  // halaman kasir dibuka (perangkat lain / CRM) langsung bisa dicari.
+  useEffect(() => {
+    if (showCustomer) void refetchCustomers();
+  }, [showCustomer, refetchCustomers]);
   const [customerSearch, setCustomerSearch] = useState('');
   const [confirmClear, setConfirmClear] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
@@ -640,12 +646,7 @@ export function ClassicCashierPage() {
   );
 
   const filteredCustomers = useMemo(() => {
-    const q = customerSearch.trim().toLowerCase();
-    const list = q
-      ? customers.filter(
-          (c) => (c.name || '').toLowerCase().includes(q) || (c.phone || '').toLowerCase().includes(q)
-        )
-      : customers;
+    const list = customers.filter((c) => matchesCustomerQuery(c, customerSearch));
     return list.slice(0, 40);
   }, [customers, customerSearch]);
 

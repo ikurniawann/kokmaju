@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import type { CustomerWithDiscount } from "@/hooks/use-pos-customers";
 import { cn } from "@/lib/utils";
 import { prefersInputAutoFocus } from "@/lib/pos/input-autofocus";
+import { matchesCustomerQuery } from "@/lib/pos/customer-search";
 import {
   cardLinkConflictMessage,
   resolveCustomerSearchInitialView,
@@ -81,15 +82,10 @@ export function CustomerSearchModal({
   const isLinkingCard = nfcUidLocked && Boolean(nfcUid.trim());
   const showGuest = shouldShowGuestOption({ allowGuest, isLinkingCard });
 
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    return customers.filter(
-      (c) =>
-        c.name?.toLowerCase().includes(q) ||
-        c.phone.includes(q) ||
-        (c.nfc_uid || "").toLowerCase().includes(q)
-    );
-  }, [customers, search]);
+  const filtered = useMemo(
+    () => customers.filter((c) => matchesCustomerQuery(c, search)),
+    [customers, search]
+  );
 
   const resetAll = () => {
     setView("select");
