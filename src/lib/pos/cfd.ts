@@ -12,7 +12,8 @@
 export const CFD_CHANNEL = "pos-cfd";
 export const CFD_SNAPSHOT_KEY = "pos-cfd-snapshot";
 /** Layar "Terima kasih" ditahan sekian ms sebelum menerima idle. */
-export const CFD_DONE_HOLD_MS = 6000;
+// 9 dtk: animasi struk keluar (±2 dtk) + waktu pelanggan membaca (2026-10-11).
+export const CFD_DONE_HOLD_MS = 9000;
 
 export interface CfdItem {
   name: string;
@@ -34,6 +35,22 @@ export interface CfdPayment {
   qr_loading?: boolean;
 }
 
+/**
+ * Isi struk utk animasi printer di layar "done" (owner 2026-10-11). Hanya
+ * item & angka — TANPA nama/nomor pelanggan (layar menghadap publik).
+ */
+export interface CfdDoneReceipt {
+  outlet?: string | null;
+  queue?: string | null;
+  order_number?: string | null;
+  method?: string | null;
+  items: Array<{ name: string; qty: number; unit_price: number; detail?: string | null }>;
+  subtotal: number;
+  discount: number;
+  /** Pajak + service + biaya lain. */
+  extra: number;
+}
+
 export interface CfdState {
   status: "idle" | "cart" | "payment" | "done";
   items: CfdItem[];
@@ -49,6 +66,8 @@ export interface CfdState {
   member_name?: string | null;
   /** Kembalian utk layar done. */
   done_change?: number;
+  /** Struk utk animasi printer di layar done (absen = layar terima kasih lama). */
+  done_receipt?: CfdDoneReceipt | null;
   updated_at: number;
 }
 
@@ -136,4 +155,52 @@ export function subscribeCfdState(listener: CfdListener): () => void {
     channel?.close();
     window.removeEventListener("storage", onStorage);
   };
+}
+
+/** Isi struk layar done dari payload struk kasir (tanpa data pribadi). */
+export function buildCfdDoneReceipt(
+  payload: {
+    orderNumber?: string;
+    checkoutNumber?: string;
+    queueNumber?: string | null;
+    items: Array<{ name: string; quantity: number; price: number; variantName?: string | null; modifierNames?: string[] | null }>;
+    subtotal?: number;
+    discountAmount: number;
+    taxAmount: number;
+    chargesBreakdown?: Array<{ amount: number }>;
+    receiptHeader?: string[];
+  },
+  methodLabel: string | null
+): CfdDoneReceipt {
+  const subtotal =
+    payload.subtotal ?? payload.items.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0);
+  const extra = payload.chargesBreakdown?.length
+    ? payload.chargesBreakdown.reduce((sum, line) => sum + (Number(line.amount) || 0), 0)
+    : Number(payload.taxAmount) || 0;
+  return {
+    outlet: payload.receiptHeader?.find((line) => line.trim())?.trim() || null,
+    queue: payload.queueNumber ?? null,
+    order_number: payload.checkoutNumber || payload.orderNumber || null,
+    method: methodLabel,
+    items: payload.items.map((item) => ({
+      name: item.name,
+      qty: Math.max(1, Math.round(Number(item.quantity) || 1)),
+      unit_price: Number(item.price) || 0,
+      detail: [item.variantName, ...(item.modifierNames ?? [])].filter(Boolean).join(", ") || null,
+    })),
+    subtotal,
+    discount: Number(payload.discountAmount) || 0,
+    extra: Math.max(0, extra),
+  };
+}
+
+/**
+ * Selama layar "done" ditahan, hanya pelanggan BERIKUTNYA (keranjang/
+ * pembayaran berisi item) yang boleh menyela. State kosong sisa transaksi
+ * barusan (idle, atau "payment" dgn keranjang kosong saat modal bayar
+ * menutup) ditunda — sebelumnya menimpa layar terima kasih seketika.
+ */
+export function shouldDeferDuringDoneHold(next: CfdState, remainingMs: number): boolean {
+  if (remainingMs <= 0 || next.status === "done") return false;
+  return next.items.length === 0;
 }

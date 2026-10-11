@@ -103,6 +103,8 @@ import { PosProductThumbnail } from '@/components/pos/PosProductThumbnail';
 
 const CASHIER_ID = '00000000-0000-0000-0000-000000000001';
 import { CartPanel } from '@/components/pos/CartPanel';
+import { ReceiptPrinterAnimation } from '@/components/pos/ReceiptPrinterAnimation';
+import { receiptFromPayload } from '@/lib/pos/receipt-animation';
 import { MemberPriceText } from '@/components/pos/MemberPriceText';
 import { CustomizationModal, type SelectedCustomization } from '@/components/pos/CustomizationModal';
 import { PaymentModal, type PaymentMethod } from '@/components/pos/PaymentModal';
@@ -111,6 +113,7 @@ import {
   type GiftCardSaleValues,
 } from '@/components/pos/GiftCardSaleDialog';
 import {
+  buildCfdDoneReceipt,
   firstNameOnly,
   idleCfdState,
   publishCfdState,
@@ -305,6 +308,7 @@ function CashierPageNewContent({ variant }: { variant: CashierPageVariant }) {
 
   /* Result */
   const [resultPayload, setResultPayload] = useState<ReceiptPayload | null>(null);
+  const [receiptReplay, setReceiptReplay] = useState(0);
   /* Kirim struk via WA dari modal sukses (fitur WA struk). Member → nomor
    * profil dipakai otomatis; non-member → kasir mengetik nomor dulu. */
   const [waPhoneInput, setWaPhoneInput] = useState("");
@@ -326,6 +330,11 @@ function CashierPageNewContent({ variant }: { variant: CashierPageVariant }) {
       status: 'done',
       total: payload.total,
       done_change: payload.change > 0 ? payload.change : 0,
+      // Animasi struk keluar dari printer di layar customer (2026-10-11).
+      done_receipt: buildCfdDoneReceipt(
+        payload,
+        payload.paymentMethod ? formatPaymentMethodLabel(payload.paymentMethod) : null
+      ),
       updated_at: Date.now(),
     });
     // Base UI Dialog tidak bisa close+open di tick yang sama — tutup payment
@@ -2218,6 +2227,7 @@ function CashierPageNewContent({ variant }: { variant: CashierPageVariant }) {
   /* Print helpers */
   const [printingReceipt, setPrintingReceipt] = useState(false);
   const handlePrint = useCallback(async (label: 'KITCHEN' | 'BAR' | 'CUSTOMER') => {
+    if (label === 'CUSTOMER') setReceiptReplay((n) => n + 1);
     if (!resultPayload || printingReceipt) return;
     setPrintingReceipt(true);
     try {
@@ -3296,52 +3306,15 @@ function CashierPageNewContent({ variant }: { variant: CashierPageVariant }) {
                   </>
                 ) : (
                   <>
-                    <div className="space-y-2 text-center">
-                      <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-emerald-50">
-                        <CheckCircle className="h-8 w-8 text-emerald-600" />
-                      </div>
-                      <h2 className="text-xl font-bold text-foreground">
-                        Payment successful
-                      </h2>
-                      {resultPayload.queueNumber ? (
-                        <p className="text-4xl font-black tabular-nums text-foreground">
-                          {resultPayload.queueNumber}
-                        </p>
-                      ) : null}
-                      <p className="text-sm text-muted-foreground">
-                        {resultPayload.queueNumber
-                          ? `Nomor Antrian · Order ${resultPayload.orderNumber || ""}`
-                          : `Order #${
-                              resultPayload.orderNumber?.slice(-8).toUpperCase() ||
-                              resultPayload.orderId?.slice(-8).toUpperCase()
-                            }`}
-                      </p>
-                    </div>
-
-                    <div className="space-y-2.5 rounded-xl border border-gray-200/70 bg-muted/30 px-4 py-3.5">
-                      <div className="flex items-center justify-between gap-3 text-sm">
-                        <span className="text-muted-foreground">Amount paid</span>
-                        <span className="font-semibold tabular-nums text-foreground">
-                          {formatCurrency(resultPayload.total)}
-                        </span>
-                      </div>
-                      {resultPayload.change > 0 ? (
-                        <div className="flex items-center justify-between gap-3 text-sm">
-                          <span className="text-muted-foreground">Change</span>
-                          <span className="font-semibold tabular-nums text-emerald-600">
-                            {formatCurrency(resultPayload.change)}
-                          </span>
-                        </div>
-                      ) : null}
-                      {resultPayload.paymentMethod ? (
-                        <div className="flex items-center justify-between gap-3 text-sm">
-                          <span className="text-muted-foreground">Method</span>
-                          <span className="font-medium capitalize text-foreground">
-                            {resultPayload.paymentMethod.replace("_", " ")}
-                          </span>
-                        </div>
-                      ) : null}
-                    </div>
+                    {/* Struk keluar dari printer (owner 2026-10-11) — diputar ulang
+                        tiap Print Struk ditekan; ketuk untuk melewati. */}
+                    <ReceiptPrinterAnimation
+                      key={`${resultPayload.orderId ?? resultPayload.orderNumber ?? "order"}-${receiptReplay}`}
+                      receipt={receiptFromPayload(
+                        resultPayload,
+                        resultPayload.paymentMethod ? formatPaymentMethodLabel(resultPayload.paymentMethod) : null
+                      )}
+                    />
                   </>
                 )}
 

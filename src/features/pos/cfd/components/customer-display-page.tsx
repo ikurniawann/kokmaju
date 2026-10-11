@@ -1,11 +1,14 @@
 "use client";
 
+import { ReceiptPrinterAnimation } from "@/components/pos/ReceiptPrinterAnimation";
+import { receiptFromCfd } from "@/lib/pos/receipt-animation";
 import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Loader2 } from "lucide-react";
 import {
   CFD_DONE_HOLD_MS,
   idleCfdState,
+  shouldDeferDuringDoneHold,
   subscribeCfdState,
   type CfdState,
 } from "@/lib/pos/cfd";
@@ -70,7 +73,7 @@ export function CustomerDisplayPage({
         return;
       }
       const remaining = CFD_DONE_HOLD_MS - (Date.now() - doneShownAt);
-      if (next.status === "idle" && remaining > 0) {
+      if (shouldDeferDuringDoneHold(next, remaining)) {
         if (holdTimer) clearTimeout(holdTimer);
         holdTimer = setTimeout(() => setView(next), remaining);
         return;
@@ -291,6 +294,23 @@ function PaymentPanel({ state }: { state: CfdState }) {
 }
 
 function DoneScreen({ state }: { state: CfdState }) {
+  const receipt = receiptFromCfd(state);
+  if (receipt) {
+    // Struk keluar dari printer (owner 2026-10-11) + ucapan terima kasih.
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-10 lg:flex-row lg:gap-16">
+        <ReceiptPrinterAnimation key={state.updated_at} receipt={receipt} size="lg" />
+        <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-left">
+          <p className="text-6xl">🙏</p>
+          <p className="text-5xl font-semibold tracking-tight text-gray-900">Terima Kasih!</p>
+          {state.done_change !== undefined && state.done_change > 0 ? (
+            <p className="text-3xl font-semibold tabular-nums text-rose-500">Kembalian: {formatRp(state.done_change)}</p>
+          ) : null}
+          <p className="text-lg text-gray-500">Sampai jumpa kembali ✨</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-6xl">🙏</p>
