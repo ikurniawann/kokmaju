@@ -1,5 +1,6 @@
 "use client";
 
+import { OtpInput, type OtpStatus } from "./otp-input";
 import { useState } from "react";
 import { Coins, Loader2, LogOut, Sparkles, UserRound } from "lucide-react";
 import { idrToArkDisplay } from "@/lib/pos/loyalty-settings";
@@ -42,10 +43,12 @@ export function MemberSheet({
   const [error, setError] = useState<string | null>(null);
   const [notRegistered, setNotRegistered] = useState(false);
   const [info, setInfo] = useState<string | null>(null);
+  const [otpStatus, setOtpStatus] = useState<OtpStatus>("idle");
 
   function reset() {
     setStep("phone");
     setCode("");
+    setOtpStatus("idle");
     setError(null);
     setNotRegistered(false);
     setInfo(null);
@@ -84,21 +87,34 @@ export function MemberSheet({
     }
   }
 
-  async function submitCode() {
-    const value = code.trim();
+  // Animasi OTP (owner 2026-10-11): denyut saat memeriksa → hijau + centang
+  // lalu tutup otomatis, atau getar merah lalu kosong utk diketik ulang.
+  async function submitCode(entered = code) {
+    const value = entered.trim();
     if (!/^\d{6}$/.test(value)) {
       setError("Kode harus 6 digit");
       return;
     }
+    if (busy) return;
     setBusy(true);
     setError(null);
+    setOtpStatus("verifying");
     try {
       await verifyOtp(phone.trim(), value);
+      setOtpStatus("success");
+      // Tampilkan animasi sukses utuh dulu — memuat profil member lebih awal
+      // membuat sheet langsung berganti ke tampilan "Akun member".
+      await new Promise((resolve) => window.setTimeout(resolve, 1300));
       await onChanged();
       reset();
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kode salah");
+      setOtpStatus("error");
+      window.setTimeout(() => {
+        setCode("");
+        setOtpStatus("idle");
+      }, 650);
     } finally {
       setBusy(false);
     }
@@ -234,17 +250,18 @@ export function MemberSheet({
           <p className="text-sm leading-relaxed text-gray-600">
             {info || "Kode OTP dikirim ke WhatsApp Anda."} Berlaku 5 menit.
           </p>
-          <label className="mt-4 block">
-            <span className="text-xs font-semibold text-gray-700">Kode 6 digit</span>
-            <input
+          <div className="mt-4">
+            <span className="mb-2 block text-xs font-semibold text-gray-700">Kode 6 digit</span>
+            <OtpInput
               value={code}
-              onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              placeholder="••••••"
-              className="mt-1.5 h-12 w-full rounded-xl border border-gray-200 px-4 text-center text-2xl font-bold tracking-[0.5em] text-gray-900 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
+              onChange={(next) => {
+                setCode(next);
+                if (error) setError(null);
+              }}
+              onComplete={(full) => void submitCode(full)}
+              status={otpStatus}
             />
-          </label>
+          </div>
           {error && (
             <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
               {error}
@@ -252,8 +269,8 @@ export function MemberSheet({
           )}
           <button
             type="button"
-            onClick={submitCode}
-            disabled={busy}
+            onClick={() => void submitCode()}
+            disabled={busy || code.length < 6 || otpStatus === "success"}
             className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-bold text-white disabled:opacity-60"
           >
             {busy && <Loader2 className="size-4 animate-spin" />}

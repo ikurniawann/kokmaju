@@ -1,0 +1,106 @@
+/* OTP 6 kotak beranimasi (owner 2026-10-11, ref. reel "OTP Verification v5"). */
+.otp {
+  --otp-accent: var(--primary, #2b2fae);
+  --otp-ok: #16a34a;
+  --otp-bad: #dc2626;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+/* Input asli transparan di atas kotak: tempel, autofill SMS/WA, keyboard angka. */
+.otp-native {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border: 0;
+  font-size: 16px; /* cegah zoom iOS */
+  caret-color: transparent;
+  color: transparent;
+  background: transparent;
+  z-index: 2;
+}
+.otp-box {
+  position: relative;
+  height: 56px;
+  border-radius: 14px;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  font: 800 24px/1 ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color: #111827;
+  transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s, background-color 0.25s, color 0.25s;
+}
+.otp-box.filled { border-color: color-mix(in srgb, var(--otp-accent) 45%, #e5e7eb); }
+.otp.focused .otp-box.active {
+  border-color: var(--otp-accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--otp-accent) 18%, transparent), 0 6px 18px color-mix(in srgb, var(--otp-accent) 28%, transparent);
+  transform: translateY(-2px);
+}
+/* Kursor berkedip di kotak aktif yang masih kosong */
+.otp.focused .otp-box.active:not(.filled)::after {
+  content: "";
+  width: 2px;
+  height: 24px;
+  border-radius: 2px;
+  background: var(--otp-accent);
+  animation: otp-caret 1s steps(2, start) infinite;
+}
+.otp-digit { display: inline-block; animation: otp-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* Memeriksa: denyut lembut berurutan */
+.otp.verifying .otp-box { animation: otp-pulse 0.9s ease-in-out infinite; }
+.otp.verifying .otp-box:nth-child(3) { animation-delay: 0.06s; }
+.otp.verifying .otp-box:nth-child(4) { animation-delay: 0.12s; }
+.otp.verifying .otp-box:nth-child(5) { animation-delay: 0.18s; }
+.otp.verifying .otp-box:nth-child(6) { animation-delay: 0.24s; }
+.otp.verifying .otp-box:nth-child(7) { animation-delay: 0.3s; }
+
+/* Sukses: gelombang hijau kiri → kanan */
+.otp.success .otp-box { animation: otp-ok 0.45s ease-out forwards; }
+.otp.success .otp-box:nth-child(3) { animation-delay: 0.06s; }
+.otp.success .otp-box:nth-child(4) { animation-delay: 0.12s; }
+.otp.success .otp-box:nth-child(5) { animation-delay: 0.18s; }
+.otp.success .otp-box:nth-child(6) { animation-delay: 0.24s; }
+.otp.success .otp-box:nth-child(7) { animation-delay: 0.3s; }
+
+/* Salah: getar + merah */
+.otp.error { animation: otp-shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+.otp.error .otp-box { border-color: var(--otp-bad); background: #fef2f2; color: var(--otp-bad); }
+
+.otp-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  color: var(--otp-ok);
+  font-weight: 700;
+  font-size: 14px;
+}
+.otp-check svg { width: 26px; height: 26px; }
+.otp-check circle { stroke-dasharray: 64; stroke-dashoffset: 64; animation: otp-draw 0.45s ease-out 0.3s forwards; }
+.otp-check path { stroke-dasharray: 20; stroke-dashoffset: 20; animation: otp-draw 0.3s ease-out 0.65s forwards; }
+
+@keyframes otp-pop { 0% { transform: scale(0.3) translateY(6px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes otp-caret { to { visibility: hidden; } }
+@keyframes otp-pulse { 0%, 100% { transform: none; } 50% { transform: translateY(-3px); border-color: var(--otp-accent); } }
+@keyframes otp-ok {
+  0% { transform: none; }
+  45% { transform: translateY(-5px) scale(1.06); }
+  100% { transform: none; border-color: var(--otp-ok); background: #f0fdf4; color: var(--otp-ok); }
+}
+@keyframes otp-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-7px); }
+  40%, 60% { transform: translateX(7px); }
+}
+@keyframes otp-draw { to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .otp, .otp *, .otp-check * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+}
