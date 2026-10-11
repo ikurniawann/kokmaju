@@ -59,6 +59,8 @@ import { MemberCardScreen } from "./member-card-screen";
 import { GuestCard } from "./guest-card";
 import { displayGuestPhone, GUEST_STORAGE_KEY, parseStoredGuest, type GuestIdentity } from "@/lib/table-order/guest";
 import { MenuItemRow } from "./menu-item-row";
+import { flyToCart } from "../fly-to-cart";
+import "./fly-to-cart.css";
 import { OrderTracking } from "./order-tracking";
 import { VariantSheet } from "./variant-sheet";
 import { DecrementSheet } from "./decrement-sheet";
@@ -323,17 +325,26 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
     return product.minXp > 0 && (!member || member.total_xp < product.minXp);
   }
 
-  function handleAdd(product: TableOrderProduct) {
+  // Animasi tambah ke keranjang: foto produk terbang ke bar keranjang.
+  const cartBarRef = useRef<HTMLButtonElement>(null);
+  const flySourceRef = useRef<HTMLElement | null>(null);
+  function animateAdd(product: TableOrderProduct, source: HTMLElement | null) {
+    flyToCart({ source, image: product.image ?? null, label: product.name, getTarget: () => cartBarRef.current });
+  }
+
+  function handleAdd(product: TableOrderProduct, source: HTMLElement | null = null) {
     if (!requireContact()) return;
     if (isLocked(product)) {
       openMember();
       return;
     }
     if (product.customizable) {
+      flySourceRef.current = source;
       setVariantProduct(product);
       return;
     }
     setCart((current) => addToCart(current, product));
+    animateAdd(product, source);
     showToast(`${product.name} ditambahkan`);
   }
 
@@ -345,16 +356,22 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
   ) {
     setCart((current) => addToCart(current, product, variant, quantity, modifiers));
     setVariantProduct(null);
+    // Tunggu sheet varian turun dulu supaya foto asal terlihat.
+    const source = flySourceRef.current;
+    flySourceRef.current = null;
+    window.setTimeout(() => animateAdd(product, source), 220);
     showToast(`${product.name} ditambahkan`);
   }
 
-  function handleIncrement(product: TableOrderProduct) {
+  function handleIncrement(product: TableOrderProduct, source: HTMLElement | null = null) {
     if (!requireContact()) return;
     if (product.customizable) {
+      flySourceRef.current = source;
       setVariantProduct(product);
       return;
     }
     setCart((current) => addToCart(current, product));
+    animateAdd(product, source);
   }
 
   // Produk dgn >1 varian di keranjang → pilih varian yang dikurangi.
@@ -709,8 +726,8 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
                     quantity={productQuantity(cart, product.id)}
                     locked={isLocked(product)}
                     memberDiscountPercent={memberDiscountPct}
-                    onAdd={() => handleAdd(product)}
-                    onIncrement={() => handleIncrement(product)}
+                    onAdd={(source) => handleAdd(product, source)}
+                    onIncrement={(source) => handleIncrement(product, source)}
                     onDecrement={() => handleDecrement(product)}
                   />
                 ))}
@@ -735,14 +752,17 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
 
       {/* Bar keranjang */}
       {cart.length > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-gray-100 bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
+        <div className="tor-cart-bar fixed inset-x-0 bottom-0 z-30 border-t border-gray-100 bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
           <button
+            ref={cartBarRef}
             type="button"
             onClick={() => setCartOpen(true)}
             className="mx-auto flex h-13 w-full max-w-md items-center justify-between rounded-2xl bg-primary px-4 py-3 text-left text-white shadow-lg shadow-black/10"
           >
             <span>
-              <span className="block text-xs text-white/75">{summary.totalItems} item · Meja {tableLabel}</span>
+              <span className="block text-xs text-white/75">
+                <span data-cart-count>{summary.totalItems}</span> item · Meja {tableLabel}
+              </span>
               <span className="block text-base font-bold">{formatRupiah(summary.total)}</span>
             </span>
             <span className="inline-flex items-center gap-1 text-sm font-bold">

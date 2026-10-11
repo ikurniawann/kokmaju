@@ -2,10 +2,11 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Lock, Minus, Plus, Sparkles } from "lucide-react";
 import { formatMenuPrice, type TableOrderProduct } from "@/lib/table-order/menu";
 import { memberPrice } from "@/lib/table-order/pricing";
+import { replayClass } from "../fly-to-cart";
 
 /**
  * Baris daftar menu — mengikuti referensi (GoFood): kiri nama tebal, baris
@@ -28,11 +29,13 @@ export function MenuItemRow({
   locked: boolean;
   /** Diskon tier member login — harga reguler dicoret + harga member. */
   memberDiscountPercent?: number;
-  onAdd: () => void;
-  onIncrement: () => void;
+  /** `source` = foto produk, titik awal animasi terbang ke keranjang. */
+  onAdd: (source: HTMLElement | null) => void;
+  onIncrement: (source: HTMLElement | null) => void;
   onDecrement: () => void;
 }) {
   const [imageBroken, setImageBroken] = useState(false);
+  const photoRef = useRef<HTMLDivElement>(null);
   const showImage = Boolean(product.image) && !imageBroken;
   const discounted = memberPrice(product.price, memberDiscountPercent);
   const hasMemberPrice = discounted < product.price;
@@ -89,7 +92,7 @@ export function MenuItemRow({
       </div>
 
       <div className="w-28 shrink-0">
-        <div className="relative">
+        <div className="relative" ref={photoRef}>
           {showImage ? (
             <img
               src={product.image as string}
@@ -106,7 +109,7 @@ export function MenuItemRow({
 
           <div className="absolute inset-x-0 -bottom-4 flex justify-center">
             {quantity > 0 ? (
-              <div className="inline-flex h-9 items-center rounded-full border-2 border-primary bg-white shadow-sm">
+              <div className="tor-stepper-in inline-flex h-9 items-center rounded-full border-2 border-primary bg-white shadow-sm">
                 <button
                   type="button"
                   onClick={onDecrement}
@@ -115,10 +118,16 @@ export function MenuItemRow({
                 >
                   <Minus className="size-4" />
                 </button>
-                <span className="min-w-6 text-center text-sm font-bold text-gray-900">{quantity}</span>
+                <span className="min-w-6 text-center text-sm font-bold text-gray-900">
+                  {/* key → angka "pop" tiap jumlah berubah */}
+                  <span key={quantity} className="tor-qty">{quantity}</span>
+                </span>
                 <button
                   type="button"
-                  onClick={onIncrement}
+                  onClick={(event) => {
+                    replayClass(event.currentTarget, "tor-add-press");
+                    onIncrement(photoRef.current);
+                  }}
                   className="flex size-8 items-center justify-center rounded-full text-primary"
                   aria-label={`Tambah ${product.name}`}
                 >
@@ -128,7 +137,10 @@ export function MenuItemRow({
             ) : (
               <button
                 type="button"
-                onClick={onAdd}
+                onClick={(event) => {
+                  replayClass(event.currentTarget, "tor-add-press");
+                  onAdd(photoRef.current);
+                }}
                 disabled={locked}
                 className="h-9 rounded-full border-2 border-primary bg-white px-6 text-sm font-bold text-primary shadow-sm transition active:scale-95 disabled:border-gray-200 disabled:text-gray-400"
               >

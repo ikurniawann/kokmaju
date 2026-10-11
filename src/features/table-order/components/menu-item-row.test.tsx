@@ -1,7 +1,7 @@
 // Owner 2026-10-01: member login di self-order melihat harga reguler dicoret
 // + harga diskon member; tamu tetap melihat harga biasa.
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { normalizeTableOrderProduct } from "@/lib/table-order/menu";
 import { MenuItemRow } from "./menu-item-row";
 
@@ -36,5 +36,24 @@ describe("MenuItemRow — harga member", () => {
     renderRow();
     expect(screen.getByText(/28[.,]000/).className).not.toContain("line-through");
     expect(screen.queryByText(/Member −/)).toBeNull();
+  });
+});
+
+// Owner 2026-10-11: animasi tambah ke keranjang — foto produk jadi titik awal
+// terbang, tombol "ditekan", angka stepper pop.
+describe("MenuItemRow — animasi tambah", () => {
+  it("Tambah & + mengirim elemen foto sebagai sumber animasi", () => {
+    const onAdd = vi.fn();
+    const onIncrement = vi.fn();
+    const props = { product: latte, locked: false, onAdd, onIncrement, onDecrement: vi.fn() };
+    const { rerender } = render(<MenuItemRow {...props} quantity={0} />);
+    const add = screen.getByRole("button", { name: "Tambah" });
+    fireEvent.click(add);
+    expect(onAdd.mock.calls[0][0]).toBeInstanceOf(HTMLElement);
+    expect(add.className).toContain("tor-add-press");
+    rerender(<MenuItemRow {...props} quantity={2} />);
+    fireEvent.click(screen.getByLabelText("Tambah Iced Latte"));
+    expect(onIncrement.mock.calls[0][0]).toBe(onAdd.mock.calls[0][0]);
+    expect(screen.getByText("2").className).toContain("tor-qty");
   });
 });
