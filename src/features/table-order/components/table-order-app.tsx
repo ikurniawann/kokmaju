@@ -805,6 +805,7 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
       <MemberCardScreen
         open={memberView === "card"}
         member={member}
+        brandName={brandName}
         arkEnabled={arkEnabled}
         xpEnabled={xpEnabled}
         busy={memberBusy}

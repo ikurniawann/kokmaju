@@ -44,6 +44,7 @@ function Leaf({ left, flip }: { left: string; flip?: boolean }) {
 export function MemberCardScreen({
   open,
   member,
+  brandName,
   arkEnabled,
   xpEnabled,
   busy,
@@ -52,6 +53,7 @@ export function MemberCardScreen({
 }: {
   open: boolean;
   member: MemberProfile | null;
+  brandName: string;
   arkEnabled: boolean;
   xpEnabled: boolean;
   busy: boolean;
@@ -177,7 +179,7 @@ export function MemberCardScreen({
             onPointerCancel={onPointerUp}
           >
             <div className="mcs-brand">
-              <span>BCD COFFEE · MEMBER</span>
+              <span>{brandName.toUpperCase()} · MEMBER</span>
               {member.tier ? <span className="mcs-tier">{member.tier.name.toUpperCase()}</span> : null}
             </div>
             <div className="mcs-who">
