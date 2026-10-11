@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Loader2, LogOut, X } from "lucide-react";
 import { idrToArkDisplay } from "@/lib/pos/loyalty-settings";
@@ -17,27 +17,41 @@ import type { MemberProfile } from "../api";
 import { lockPageScroll } from "./sheet";
 import "./member-card-screen.css";
 
-const STRING_PX = 54;
-const TAG_STRING_PX = 26;
-const BOKEH = [
-  { left: "8%", top: "18%", size: 120, delay: "0s" },
-  { left: "70%", top: "8%", size: 160, delay: "-3s" },
-  { left: "78%", top: "58%", size: 110, delay: "-5s" },
-  { left: "-6%", top: "64%", size: 150, delay: "-7s" },
-];
-
-function Leaf({ left, flip }: { left: string; flip?: boolean }) {
+/** Tali lanyard: dua strap dari atas layar bertemu di pengait logam. */
+function Lanyard({ brand }: { brand: string }) {
+  const id = useId().replace(/:/g, "");
+  const text = Array.from({ length: 6 }, () => `${brand.toUpperCase()}  •  `).join("");
   return (
-    <svg className="mcs-leaf" style={{ left, transform: flip ? "scaleX(-1)" : undefined }} viewBox="0 0 34 22" aria-hidden>
-      <path d="M2 18 C 8 2, 26 0, 32 4 C 28 16, 12 22, 2 18 Z" fill="#5f9b4f" />
-      <path d="M4 17 C 12 12, 22 8, 31 5" stroke="#3f7a35" strokeWidth="1.2" fill="none" />
+    <svg className="mcs-lanyard" viewBox="0 0 200 210" aria-hidden>
+      <defs>
+        <path id={`${id}l`} d="M24 -40 L93 160" />
+        <path id={`${id}r`} d="M107 160 L176 -40" />
+        <linearGradient id={`${id}m`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stopColor="#f8fafc" />
+          <stop offset="0.55" stopColor="#aab3bf" />
+          <stop offset="1" stopColor="#6b7480" />
+        </linearGradient>
+      </defs>
+      {(["l", "r"] as const).map((side) => (
+        <g key={side}>
+          <use href={`#${id}${side}`} stroke="#0b0e33" strokeWidth="24" />
+          <use href={`#${id}${side}`} stroke="#1c2068" strokeWidth="20" />
+          <text className="mcs-lanyard-text" dy="3.2">
+            <textPath href={`#${id}${side}`}>{text}</textPath>
+          </text>
+        </g>
+      ))}
+      {/* crimp, ring putar & pengait lobster */}
+      <rect x="84" y="150" width="32" height="16" rx="4" fill={`url(#${id}m)`} stroke="#5b6470" strokeWidth="0.8" />
+      <circle cx="100" cy="174" r="7" fill="none" stroke={`url(#${id}m)`} strokeWidth="3.2" />
+      <path d="M100 180 c-8 0 -9 8 -9 13 c0 7 4 11 9 11 c5 0 9 -4 9 -11 c0 -3 -1 -6 -3 -8" fill="none" stroke={`url(#${id}m)`} strokeWidth="3.4" strokeLinecap="round" />
     </svg>
   );
 }
 
 /**
  * Kartu member self-order layar penuh (owner 2026-10-11): kartu jatuh &
- * berayun pada tali dari rel kayu, bisa ditarik jari lalu memantul; tag
+ * berayun pada tali lanyard kantor, bisa ditarik jari lalu memantul; tag
  * "Total belanja" ikut berayun di bawahnya. QR = ID member (dipindai kasir
  * ke Find Customer).
  */
@@ -149,11 +163,7 @@ export function MemberCardScreen({
 
   return (
     <div className="mcs" role="dialog" aria-modal="true" aria-label="Kartu member">
-      <div className="mcs-bokeh" aria-hidden>
-        {BOKEH.map((b, i) => (
-          <span key={i} style={{ left: b.left, top: b.top, width: b.size, height: b.size, animationDelay: b.delay }} />
-        ))}
-      </div>
+      <div className="mcs-office" aria-hidden />
       <header className="mcs-head">
         <h2>Kartu Member</h2>
         <button type="button" className="mcs-close" onClick={onClose} aria-label="Tutup kartu member">
@@ -162,15 +172,8 @@ export function MemberCardScreen({
       </header>
 
       <div className="mcs-stage">
-        <div className="mcs-rail" aria-hidden />
-        <Leaf left="12%" />
-        <Leaf left="26%" flip />
-        <Leaf left="68%" />
-        <Leaf left="82%" flip />
-
         <div ref={hangRef} className="mcs-hang" style={{ transform: "translateY(-900px)" }}>
-          <div className="mcs-string" style={{ height: STRING_PX }} />
-          <div className="mcs-clip" />
+          <Lanyard brand={brandName} />
           <article
             className="mcs-card"
             onPointerDown={onPointerDown}
@@ -196,8 +199,9 @@ export function MemberCardScreen({
             {since ? <div className="mcs-since">Member sejak {since}</div> : null}
 
             <div ref={tagRef} className="mcs-tag-hang">
-              <div className="mcs-string" style={{ height: TAG_STRING_PX }} />
+              <div className="mcs-ring" />
               <div className="mcs-tag">
+                <i className="mcs-chip" />
                 <small>TOTAL BELANJA</small>
                 <b>{formatRupiah(member.total_spent)}</b>
                 <span>{member.visit_count.toLocaleString("id-ID")} kunjungan</span>

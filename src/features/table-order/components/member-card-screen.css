@@ -1,4 +1,4 @@
-/* Kartu member menggantung — layar penuh self-order (owner 2026-10-11, ref. "Hanging Cards"). */
+/* Kartu member menggantung di lanyard kantor — layar penuh self-order (owner 2026-10-11, ref. "Hanging Cards"). */
 .mcs {
   position: fixed;
   inset: 0;
@@ -10,45 +10,27 @@
   background: radial-gradient(120% 70% at 50% 0%, #4a4fd6 0%, #2b2fae 38%, #1b1f73 100%);
   animation: mcs-fade 0.25s ease-out;
 }
-.mcs-bokeh { position: absolute; inset: 0; pointer-events: none; }
-.mcs-bokeh span {
+/* Suasana kantor: grid kaca/blueprint + pantulan cahaya jendela */
+.mcs-office {
   position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 70%);
-  animation: mcs-float 9s ease-in-out infinite alternate;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, transparent 0 34%, rgba(255, 255, 255, 0.07) 34% 46%, transparent 46% 52%, rgba(255, 255, 255, 0.05) 52% 58%, transparent 58%),
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px) 0 0 / 32px 32px;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 70%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 70%, transparent 100%);
 }
-.mcs-head { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding: max(14px, env(safe-area-inset-top)) 16px 6px; color: #fff; }
+.mcs-head { position: relative; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: max(14px, env(safe-area-inset-top)) 16px 6px; color: #fff; }
 .mcs-head h2 { font-size: 15px; font-weight: 800; letter-spacing: 0.02em; }
 .mcs-close { width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.16); color: #fff; border: 0; }
 
 .mcs-stage { position: relative; flex: 1; min-height: 0; }
-.mcs-rail {
-  position: absolute;
-  left: -10px;
-  right: -10px;
-  top: 14px;
-  height: 18px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #a5714a 0%, #7a4b2e 60%, #5b3622 100%);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
-  z-index: 2;
-}
-.mcs-rail::after {
-  /* serat kayu */
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 10px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 40%),
-    repeating-linear-gradient(90deg, transparent 0 46px, rgba(60, 30, 14, 0.25) 46px 47px, transparent 47px 83px, rgba(60, 30, 14, 0.18) 83px 84px);
-}
-.mcs-leaf { position: absolute; top: 4px; z-index: 3; width: 34px; height: 22px; }
-
 .mcs-hang {
   position: absolute;
   left: 50%;
-  top: 26px;
+  top: -74px;
   width: var(--mcs-card-w);
   margin-left: calc(var(--mcs-card-w) / -2);
   transform-origin: 50% 0;
@@ -59,26 +41,17 @@
   will-change: transform;
   --mcs-card-w: min(300px, 78vw);
 }
-.mcs-string { width: 2px; background: linear-gradient(180deg, #e9dcc6, #c8b493); box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.15); }
-.mcs-clip {
-  width: 30px;
-  height: 18px;
-  margin-top: -2px;
-  border-radius: 8px 8px 6px 6px;
-  background: linear-gradient(180deg, #f3f4f6, #b9c0c8);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 #fff;
-  position: relative;
-  z-index: 2;
-}
+.mcs-lanyard { position: relative; z-index: 2; width: 200px; height: 210px; overflow: visible; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35)); }
+.mcs-lanyard-text { font: 800 8.5px system-ui, sans-serif; letter-spacing: 0.14em; fill: rgba(255, 255, 255, 0.82); }
 .mcs-card {
   position: relative;
   width: 100%;
-  margin-top: -6px;
+  margin-top: -18px;
   border-radius: 26px;
   padding: 18px 18px 16px;
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(240, 242, 255, 0.9));
   border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 22px 50px rgba(8, 10, 50, 0.45), inset 0 1px 0 #fff;
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.28), 0 0 0 6px rgba(255, 255, 255, 0.45), 0 22px 50px rgba(8, 10, 50, 0.45), inset 0 1px 0 #fff;
   touch-action: none;
   user-select: none;
   cursor: grab;
@@ -107,20 +80,27 @@
 .mcs-qr-caption { margin-top: 8px; text-align: center; font-size: 11px; color: #6b7099; }
 .mcs-since { margin-top: 4px; text-align: center; font-size: 10.5px; color: #8b90b5; }
 
-.mcs-tag-hang { position: absolute; left: 50%; top: 100%; width: 170px; margin-left: -85px; transform-origin: 50% 0; display: flex; flex-direction: column; align-items: center; will-change: transform; }
+/* Kartu akses (total belanja) digantung cincin logam di bawah badge */
+.mcs-tag-hang { position: absolute; left: 50%; top: calc(100% - 8px); width: 204px; margin-left: -102px; transform-origin: 50% 0; display: flex; flex-direction: column; align-items: center; will-change: transform; }
+.mcs-ring { width: 18px; height: 18px; border-radius: 50%; border: 3px solid #c3cad3; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.6); position: relative; z-index: 2; }
 .mcs-tag {
+  position: relative;
   width: 100%;
-  margin-top: -2px;
-  border-radius: 18px;
-  padding: 10px 14px 12px;
-  text-align: center;
-  background: linear-gradient(160deg, rgba(255, 248, 230, 0.97), rgba(255, 236, 196, 0.92));
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 16px 30px rgba(8, 10, 50, 0.4);
+  margin-top: -8px;
+  border-radius: 14px;
+  padding: 14px 14px 12px 50px;
+  text-align: left;
+  color: #fff;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 60%, #0b1020 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 30px rgba(8, 10, 50, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
-.mcs-tag small { display: block; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; color: #a0640c; }
-.mcs-tag b { display: block; margin-top: 2px; font: 800 19px ui-monospace, "SFMono-Regular", Menlo, monospace; color: #4a2c00; }
-.mcs-tag span { display: block; font-size: 11px; color: #8a6a3a; }
+.mcs-tag::before { content: ""; position: absolute; top: 5px; left: 50%; width: 22px; height: 5px; margin-left: -11px; border-radius: 4px; background: #374151; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6); }
+.mcs-chip { position: absolute; left: 14px; top: 50%; width: 26px; height: 20px; margin-top: -8px; border-radius: 5px; background: linear-gradient(135deg, #f6d77a, #c9971f); box-shadow: inset 0 0 0 1px rgba(90, 60, 0, 0.35); }
+.mcs-chip::after { content: ""; position: absolute; inset: 5px 8px; border: 1px solid rgba(90, 60, 0, 0.35); border-radius: 2px; }
+.mcs-tag small { display: block; font-size: 9.5px; font-weight: 800; letter-spacing: 0.14em; color: #9ca3af; }
+.mcs-tag b { display: block; margin-top: 1px; font: 800 17px ui-monospace, "SFMono-Regular", Menlo, monospace; color: #fff; }
+.mcs-tag span { display: block; font-size: 10.5px; color: #9ca3af; }
 
 .mcs-foot { position: relative; z-index: 3; padding: 10px 16px max(16px, env(safe-area-inset-bottom)); display: grid; gap: 10px; }
 .mcs-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; }
@@ -131,11 +111,10 @@
 .mcs-hint { text-align: center; font-size: 11px; color: rgba(255, 255, 255, 0.75); }
 
 @keyframes mcs-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes mcs-float { from { transform: translate(0, 0); } to { transform: translate(18px, -26px); } }
 @media (max-height: 700px) {
   .mcs-hang { --mcs-card-w: min(270px, 74vw); }
   .mcs-qr svg { width: 120px !important; height: 120px !important; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mcs, .mcs-bokeh span { animation: none; }
+  .mcs { animation: none; }
 }
