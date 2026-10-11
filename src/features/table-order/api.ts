@@ -44,6 +44,10 @@ export type MemberProfile = {
   ark_rate: number;
   total_xp: number;
   tier: { code: string; name: string; discount_percent: number } | null;
+  /** Kartu member (2026-10-11). */
+  total_spent: number;
+  visit_count: number;
+  member_since: string | null;
 };
 
 export type OrderQris = {
@@ -196,6 +200,9 @@ export async function fetchMember(): Promise<MemberProfile | null> {
         ark_rate: number;
         total_xp: number;
         tier: MemberProfile["tier"];
+        total_spent?: number;
+        visit_count?: number;
+        member_since?: string | null;
       };
     }>("/api/member-portal/me");
     return {
@@ -206,6 +213,9 @@ export async function fetchMember(): Promise<MemberProfile | null> {
       ark_rate: Number(json.data.ark_rate) || 1000,
       total_xp: Number(json.data.total_xp) || 0,
       tier: json.data.tier,
+      total_spent: Number(json.data.total_spent) || 0,
+      visit_count: Number(json.data.visit_count) || 0,
+      member_since: json.data.member_since ?? null,
     };
   } catch (error) {
     if (error instanceof ApiRequestError && error.status === 401) return null;

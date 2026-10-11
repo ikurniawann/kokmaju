@@ -30,3 +30,14 @@ describe("matchesCustomerQuery", () => {
     expect(matchesCustomerQuery(budi, "  ")).toBe(true);
   });
 });
+
+describe("QR kartu member", () => {
+  it("isi QR 'BCD-M:<id>' menemukan member tepat (bukan sebagian)", async () => {
+    const { memberQrValue } = await import("./customer-search");
+    const member = { ...budi, id: "5a1f0000-1111-4222-8333-444455556666" };
+    expect(matchesCustomerQuery(member, memberQrValue(member.id))).toBe(true);
+    expect(matchesCustomerQuery(member, ` ${memberQrValue(member.id).toUpperCase()} `)).toBe(true);
+    expect(matchesCustomerQuery(member, "BCD-M:5a1f")).toBe(false);
+    expect(matchesCustomerQuery({ ...member, id: "lain" }, memberQrValue(member.id))).toBe(false);
+  });
+});

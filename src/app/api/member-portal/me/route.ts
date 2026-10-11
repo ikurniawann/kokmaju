@@ -29,7 +29,8 @@ export async function GET() {
                   wa_consent, member_type, membership_tier,
                   ark_coin_balance::float AS ark_coin_balance,
                   total_xp::float AS total_xp,
-                  visit_count, free_xp_granted_at, wa_verified_at
+                  visit_count, free_xp_granted_at, wa_verified_at,
+                  COALESCE(total_spent, 0)::float AS total_spent, created_at
            FROM pos.pos_customers WHERE id = $1`,
           [session.customerId]
         ),
@@ -81,6 +82,9 @@ export async function GET() {
         ark_rate: Number(loyalty[0]?.ark_rate) || DEFAULT_POS_LOYALTY_SETTINGS.ark_rate,
         total_xp: totalXp,
         visit_count: Number(customer.visit_count) || 0,
+        // Kartu member self-order (2026-10-11): total belanja & member sejak.
+        total_spent: Number(customer.total_spent) || 0,
+        member_since: customer.created_at ? new Date(customer.created_at).toISOString() : null,
         tier: currentTier
           ? {
               code: currentTier.code,

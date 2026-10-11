@@ -43,6 +43,7 @@ import {
   fetchMember,
   fetchOrder,
   fetchSession,
+  logoutMember,
   type Catalog,
   type MemberProfile,
   type OrderData,
@@ -54,6 +55,7 @@ import { MyOrdersList } from "./my-orders-list";
 import { BottomSheet } from "./sheet";
 import { CartSheet } from "./cart-sheet";
 import { MemberSheet } from "./member-sheet";
+import { MemberCardScreen } from "./member-card-screen";
 import { GuestCard } from "./guest-card";
 import { displayGuestPhone, GUEST_STORAGE_KEY, parseStoredGuest, type GuestIdentity } from "@/lib/table-order/guest";
 import { MenuItemRow } from "./menu-item-row";
@@ -86,7 +88,10 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [variantProduct, setVariantProduct] = useState<TableOrderProduct | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
-  const [memberOpen, setMemberOpen] = useState(false);
+  // "card" = kartu member layar penuh (sudah login); "login" = sheet OTP.
+  const [memberView, setMemberView] = useState<"login" | "card" | null>(null);
+  const [memberBusy, setMemberBusy] = useState(false);
+  const openMember = () => setMemberView(member ? "card" : "login");
   const [menuJumpOpen, setMenuJumpOpen] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
@@ -132,6 +137,17 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
     setMember(profile);
     if (!profile && paymentMethod === "ark_coin") setPaymentMethod("cashier");
   }, [paymentMethod]);
+
+  async function logoutFromCard() {
+    setMemberBusy(true);
+    try {
+      await logoutMember();
+      await reloadMember();
+      setMemberView(null);
+    } finally {
+      setMemberBusy(false);
+    }
+  }
 
   // ARK Coin dimatikan setelah pelanggan memilihnya → jatuh ke "Bayar di kasir".
   // Nilai turunan (bukan setState di effect) supaya tak ada render berantai.
@@ -310,7 +326,7 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
   function handleAdd(product: TableOrderProduct) {
     if (!requireContact()) return;
     if (isLocked(product)) {
-      setMemberOpen(true);
+      openMember();
       return;
     }
     if (product.customizable) {
@@ -388,7 +404,7 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
       if (effectivePaymentMethod === "ark_coin") void reloadMember();
     } catch (error) {
       if (error instanceof ApiRequestError && error.status === 401) {
-        setMemberOpen(true);
+        setMemberView("login");
       }
       if (error instanceof ApiRequestError && error.status === 409) {
         void loadCatalog();
@@ -544,7 +560,7 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => setMemberOpen(true)}
+                  onClick={openMember}
                   className={`inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-xs font-bold ${
                     member ? "border-primary bg-primary/5 text-primary" : "border-primary text-primary"
                   }`}
@@ -592,7 +608,7 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
               setCoachOpen(false);
               showToast("Berhasil masuk sebagai member");
             }}
-            onOpenMember={() => setMemberOpen(true)}
+            onOpenMember={openMember}
             onDismissCoach={() => setCoachOpen(false)}
           />
         </div>
@@ -771,19 +787,29 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
           else guestCardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
         }}
         onQuantity={(cartId, delta) => setCart((current) => adjustCartQuantity(current, cartId, delta))}
-        onOpenMember={() => setMemberOpen(true)}
+        onOpenMember={openMember}
         submitting={submitting}
         error={orderError}
         onSubmit={() => void submitOrder()}
       />
 
       <MemberSheet
-        open={memberOpen}
+        open={memberView === "login"}
         member={member}
-        onClose={() => setMemberOpen(false)}
+        onClose={() => setMemberView(null)}
         onChanged={reloadMember}
         arkEnabled={arkEnabled}
         xpEnabled={xpEnabled}
+      />
+
+      <MemberCardScreen
+        open={memberView === "card"}
+        member={member}
+        arkEnabled={arkEnabled}
+        xpEnabled={xpEnabled}
+        busy={memberBusy}
+        onClose={() => setMemberView(null)}
+        onLogout={() => void logoutFromCard()}
       />
 
       <DecrementSheet

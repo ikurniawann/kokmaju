@@ -10,12 +10,23 @@ export function normalizePhoneDigits(value: string | null | undefined) {
   return digits.startsWith("62") ? `0${digits.slice(2)}` : digits;
 }
 
+/** Isi QR kartu member (self-order) — dipindai ke kolom cari Find Customer. */
+export const MEMBER_QR_PREFIX = "BCD-M:";
+
+export function memberQrValue(customerId: string) {
+  return `${MEMBER_QR_PREFIX}${customerId}`;
+}
+
 export function matchesCustomerQuery(
-  customer: { name?: string | null; phone?: string | null; nfc_uid?: string | null },
+  customer: { id?: string | null; name?: string | null; phone?: string | null; nfc_uid?: string | null },
   rawQuery: string
 ) {
   const query = rawQuery.trim().toLowerCase();
   if (!query) return true;
+  // QR kartu member (scanner mengetik isinya ke kolom cari) → cocokkan ID persis.
+  if (query.startsWith(MEMBER_QR_PREFIX.toLowerCase())) {
+    return Boolean(customer.id) && customer.id!.toLowerCase() === query.slice(MEMBER_QR_PREFIX.length).trim();
+  }
   if ((customer.name ?? "").toLowerCase().includes(query)) return true;
   if ((customer.nfc_uid ?? "").toLowerCase().includes(query)) return true;
   // Nomor: cocokkan digit saja (abaikan spasi/strip/+), minimal 3 digit.
