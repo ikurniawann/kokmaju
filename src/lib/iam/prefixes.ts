@@ -14,6 +14,8 @@ export const IAM = {
   posOperations: ["pos.operations", "pos.cashier.central"],
   /** POS → Operasional → Tagihan (tagihan member, 2026-10-01). */
   posMemberBills: ["pos.operations.member-bills"],
+  /** BCD Twin — visual 3D coffee shop (owner/admin, 2026-10-11). */
+  bcdTwin: ["bcd-twin"],
   posCatalog: ["pos.catalog"],
   posKitchen: ["pos.kitchen"],
   posLoyalty: ["pos.loyalty"],

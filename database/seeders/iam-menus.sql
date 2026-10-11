@@ -6,6 +6,7 @@
 
 INSERT INTO iam.menus (code, menu_name, route_path, icon, menu_type, order_number, permission_context) VALUES
   ('dashboard', 'Beranda', '/dashboard', 'home', 'sidebar', 0, '{"actions":["read"]}'::jsonb),
+  ('bcd-twin', 'BCD Twin', '/dashboard/bcd-twin', 'map', 'sidebar', 1, '{"actions":["read"]}'::jsonb),
   ('ess', 'Area Karyawan', NULL, 'calendar', 'group', 5, '{"actions":["read"]}'::jsonb),
   ('ess.attendance', 'Absensi', '/dashboard/me/absensi', 'calendar', 'sidebar', 10, '{"actions":["read"]}'::jsonb),
   ('ess.leave', 'Izin & Cuti', '/dashboard/me/cuti', 'paper-airplane', 'sidebar', 20, '{"actions":["read"]}'::jsonb),
@@ -298,4 +299,6 @@ WHERE deleted_at IS NULL
     -- GoFood / GoBiz (EPIC-049, 12 Sep 2026):
     'pos.operations.gofood',
     -- Tagihan Member (1 Okt 2026):
-    'pos.operations.member-bills');
+    'pos.operations.member-bills',
+    -- BCD Twin (11 Okt 2026):
+    'bcd-twin');
