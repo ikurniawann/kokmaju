@@ -449,6 +449,9 @@ export interface Order {
   /** Kontak pemesan self-order (tamu, wajib sejak 2026-09-28). */
   contact_name?: string | null;
   contact_phone?: string | null;
+  /** Pickup terjadwal self-order (EPIC-053): jam ambil & kapan dilepas ke dapur. */
+  pickup_at?: string | null;
+  kitchen_release_at?: string | null;
   items?: any[];
   splits?: any[];
   checkout_id?: string | null;

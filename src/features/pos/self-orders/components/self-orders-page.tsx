@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { BellRing, RefreshCw, Volume2 } from "lucide-react";
 import { unlockKdsSound } from "@/features/pos/kds/queries";
 import { SelfOrderQueue, useIncomingSelfOrders } from "./self-order-queue";
+import { PickupToggle } from "./pickup-toggle";
 
 /**
  * Layar pesanan self-order utk HP kasir (dibuka dari link "Buatkan Pesanan"
@@ -52,6 +53,7 @@ export function SelfOrdersPage() {
           </button>
         </div>
       </div>
+      <PickupToggle />
       {query.isError ? (
         <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {query.error instanceof Error ? query.error.message : "Gagal memuat pesanan"}

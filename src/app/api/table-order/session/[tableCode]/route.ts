@@ -3,6 +3,8 @@ import { getMemberSession } from "@/lib/member-portal/session";
 import { loadTableByCode, loadVenueContext, tableLabel } from "@/lib/table-order/server";
 import { getLoyaltyFeatures } from "@/lib/crm/loyalty-features-server";
 import { loadStaticQris } from "@/lib/payments/static-qris";
+import { getSetting } from "@/lib/settings/app-settings";
+import { isPickupCode, PICKUP_PLACE_LABEL, PICKUP_SETTING_KEY } from "@/lib/table-order/pickup";
 
 export const dynamic = "force-dynamic";
 
@@ -27,8 +29,10 @@ export async function GET(
   }
 
   try {
-    const [table, venue, member, loyalty, staticQris] = await Promise.all([
-      loadTableByCode(code).catch((error) => {
+    // Pickup tanpa meja (EPIC-053): kode khusus PICKUP, bukan meja.
+    const pickup = isPickupCode(code);
+    const [table, venue, member, loyalty, staticQris, pickupSetting] = await Promise.all([
+      (pickup ? Promise.resolve(null) : loadTableByCode(code)).catch((error) => {
         console.warn("Table order table lookup warning:", error instanceof Error ? error.message : error);
         return null;
       }),
@@ -36,6 +40,7 @@ export async function GET(
       getMemberSession().catch(() => null),
       getLoyaltyFeatures(),
       loadStaticQris().catch(() => null),
+      pickup ? getSetting(PICKUP_SETTING_KEY).catch(() => null) : Promise.resolve(null),
     ]);
 
     const inactiveTable = Boolean(table && table.is_active === false);
@@ -45,11 +50,15 @@ export async function GET(
       data: {
         table_id: table && !inactiveTable ? table.id : null,
         table_code: code.toUpperCase(),
-        table_label: tableLabel(inactiveTable ? null : table, code),
+        table_label: pickup ? PICKUP_PLACE_LABEL : tableLabel(inactiveTable ? null : table, code),
         table_area: table?.area ?? null,
         table_resolved: Boolean(table && !inactiveTable),
         status: table?.status ?? "available",
-        order_type: "dine_in",
+        order_type: pickup ? "takeaway" : "dine_in",
+        mode: pickup ? "pickup" : "table",
+        pickup_open: pickup ? pickupSetting === "true" : false,
+        // Jam server utk menghitung pilihan jam ambil (jam HP bisa salah).
+        server_now: new Date().toISOString(),
         brand_name: venue.brandName,
         billing: {
           profile: venue.billingProfileName,

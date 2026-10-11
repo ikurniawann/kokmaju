@@ -1,5 +1,6 @@
 "use client";
 
+import { formatPickupTime, placeLabel } from "@/lib/table-order/pickup";
 /* eslint-disable @next/next/no-img-element */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -156,7 +157,8 @@ export function OrderTracking({
         ) : null}
         <div className="text-xs font-semibold uppercase tracking-wide text-white/70">{brandName}</div>
         <div className="mt-1 text-sm text-white/80">
-          Meja {tableLabel} · {orderTypeText(order.order_type)}
+          {order.pickup_at ? `Ambil jam ${formatPickupTime(order.pickup_at)} di kasir` : placeLabel(tableLabel)} ·{" "}
+          {orderTypeText(order.order_type)}
         </div>
         <div className="mt-5 flex items-end justify-between">
           <div>
@@ -218,7 +220,9 @@ export function OrderTracking({
               })}
             </ol>
           )}
-          <p className="mt-3 text-sm text-gray-600">{orderStatusText(order.status)}</p>
+          <p className="mt-3 text-sm text-gray-600">
+            {order.pickup_at && order.status === "ready" ? "Siap diambil di kasir" : orderStatusText(order.status)}
+          </p>
         </section>
 
         <section className="rounded-2xl bg-white p-4 shadow-md shadow-black/5">

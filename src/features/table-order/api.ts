@@ -22,6 +22,10 @@ export type TableSession = {
   /** Saklar CRM → Pengaturan (lib/crm/loyalty-features). Absen = aktif (server lama). */
   ark_enabled?: boolean;
   xp_enabled?: boolean;
+  /** Pickup tanpa meja (EPIC-053). */
+  mode?: "table" | "pickup";
+  pickup_open?: boolean;
+  server_now?: string;
 };
 
 export type CatalogMeta = {
@@ -94,6 +98,8 @@ export type OrderData = {
   table_code?: string;
   /** Static QRIS: kapan pemesan terakhir mengunggah bukti bayar (null = belum). */
   payment_proof_uploaded_at?: string | null;
+  /** Pickup: jam ambil (null = bukan pickup). */
+  pickup_at?: string | null;
 };
 
 export type CreateOrderInput = {
@@ -105,6 +111,8 @@ export type CreateOrderInput = {
   guest_name?: string;
   /** Wajib bila bukan member login — 628xx. */
   guest_phone?: string;
+  /** Pickup: jam ambil ISO; null = secepatnya. */
+  pickup_at?: string | null;
 };
 
 export class ApiRequestError extends Error {

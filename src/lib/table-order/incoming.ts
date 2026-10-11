@@ -11,6 +11,8 @@ type IncomingOrderLike = {
   special_requests?: string | null;
   ordered_at?: string | null;
   created_at?: string | null;
+  payment_status?: string | null;
+  pickup_at?: string | null;
 };
 
 export function isSelfOrder(order: Pick<IncomingOrderLike, "special_requests">): boolean {
@@ -54,9 +56,18 @@ export function timeAgoText(iso: string | null | undefined, now = Date.now()): s
   return `${Math.floor(hours / 24)} hari lalu`;
 }
 
+/**
+ * Pickup (EPIC-053) yang masih menunggu QRIS dinamis dibayar pelanggan —
+ * belum perlu diurus kasir (otomatis muncul setelah lunas). QRIS statis tetap
+ * tampil karena kasir harus memeriksa bukti bayarnya.
+ */
+export function isAwaitingPickupPayment(order: IncomingOrderLike) {
+  return Boolean(order.pickup_at) && order.payment_status !== "paid" && selfOrderPaymentFlow(order) === "qris";
+}
+
 /** Self-order berstatus pending (belum ditekan "Dibuat"), terlama di atas. */
 export function pickIncomingSelfOrders<T extends IncomingOrderLike>(orders: T[]): T[] {
   return orders
-    .filter((order) => order.status === "pending" && isSelfOrder(order))
+    .filter((order) => order.status === "pending" && isSelfOrder(order) && !isAwaitingPickupPayment(order))
     .sort((a, b) => String(a.ordered_at || a.created_at || "").localeCompare(String(b.ordered_at || b.created_at || "")));
 }

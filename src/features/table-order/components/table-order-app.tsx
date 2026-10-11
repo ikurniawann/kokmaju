@@ -4,6 +4,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  ChevronLeft,
   ChevronRight,
   Coins,
   Loader2,
@@ -60,6 +61,10 @@ import { GuestCard } from "./guest-card";
 import { displayGuestPhone, GUEST_STORAGE_KEY, parseStoredGuest, type GuestIdentity } from "@/lib/table-order/guest";
 import { MenuItemRow } from "./menu-item-row";
 import { flyToCart } from "../fly-to-cart";
+import Link from "next/link";
+import { useStandalone } from "@/features/customer-app/install";
+import { CUSTOMER_APP_START } from "@/lib/table-order/pwa";
+import { isPickupCode, pickupSlots, placeLabel } from "@/lib/table-order/pickup";
 import "./fly-to-cart.css";
 import { OrderTracking } from "./order-tracking";
 import { VariantSheet } from "./variant-sheet";
@@ -69,7 +74,10 @@ const HERO_IMAGE = "/bg-bcd.webp";
 
 type View = "menu" | "tracking" | "orders";
 
-export function TableOrderApp({ tableCode }: { tableCode: string }) {
+export function TableOrderApp({ tableCode, homeHref }: { tableCode: string; homeHref?: string }) {
+  // Dibuka dari aplikasi pelanggan (PWA terpasang) → logo jadi tombol ke beranda.
+  const standalone = useStandalone();
+  const appHome = homeHref ?? (standalone ? CUSTOMER_APP_START : null);
   const [session, setSession] = useState<TableSession | null>(null);
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [loading, setLoading] = useState(true);
@@ -79,6 +87,10 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [orderType, setOrderType] = useState<TableOrderType>("dine_in");
   const [paymentMethod, setPaymentMethod] = useState<TableOrderPaymentMethod>("cashier");
+  // Pickup tanpa meja (EPIC-053): wajib bayar dulu + jam ambil (null = secepatnya).
+  const pickupMode = isPickupCode(tableCode);
+  const [pickupAt, setPickupAt] = useState<string | null>(null);
+  const [serverOffset, setServerOffset] = useState(0);
   const [note, setNote] = useState("");
   /** Data pemesan tamu (wajib; tersimpan di HP ini). Member login = otomatis lengkap. */
   const [guest, setGuest] = useState<GuestIdentity | null>(null);
@@ -156,10 +168,28 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
   // Sama utk Static QRIS yang dinonaktifkan admin di tengah sesi.
   const staticQrisAvailable = Boolean(session?.static_qris_available && session.static_qris_image_url);
   const anyQris = Boolean(session?.qris_available) || staticQrisAvailable;
-  const effectivePaymentMethod: TableOrderPaymentMethod =
+  const tableFallback: TableOrderPaymentMethod =
     (!arkEnabled && paymentMethod === "ark_coin") || (!staticQrisAvailable && paymentMethod === "static_qris")
       ? "cashier"
       : paymentMethod;
+  // Pickup tidak punya "bayar di kasir" → metode bayar-dulu pertama yang tersedia.
+  const effectivePaymentMethod: TableOrderPaymentMethod =
+    pickupMode && tableFallback === "cashier"
+      ? session?.qris_available
+        ? "qris"
+        : staticQrisAvailable
+          ? "static_qris"
+          : arkEnabled && member
+            ? "ark_coin"
+            : "cashier"
+      : tableFallback;
+  // Jam ambil dihitung dari jam server; diperbarui tiap keranjang dibuka.
+  const [pickupSlotList, setPickupSlotList] = useState<string[]>([]);
+  function openCart() {
+    if (pickupMode) setPickupSlotList(pickupSlots(new Date(Date.now() + serverOffset)).map((d) => d.toISOString()));
+    setCartOpen(true);
+  }
+  const effectivePickupAt = pickupAt && pickupSlotList.includes(pickupAt) ? pickupAt : null;
 
   const loadCatalog = useCallback(async () => {
     const next = await fetchCatalog();
@@ -177,6 +207,7 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
         const [sessionData, catalogData] = await Promise.all([fetchSession(tableCode), fetchCatalog()]);
         if (cancelled) return;
         setSession(sessionData);
+        if (sessionData.server_now) setServerOffset(Date.parse(sessionData.server_now) - Date.now());
         setCatalog(catalogData);
         if (sessionData.member_logged_in) {
           const profile = await fetchMember().catch(() => null);
@@ -394,7 +425,8 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
     try {
       const order = await createOrder({
         table_code: tableCode,
-        order_type: orderType,
+        order_type: pickupMode ? "takeaway" : orderType,
+        pickup_at: pickupMode ? effectivePickupAt : undefined,
         payment_method: effectivePaymentMethod,
         items: cart.map((line) => ({
           product_id: line.productId,
@@ -491,9 +523,20 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
           <img src={HERO_IMAGE} alt="" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-gray-50" />
           <div className="absolute inset-x-4 top-4 flex items-center justify-between">
-            <div className="flex size-11 items-center justify-center rounded-full bg-white/95 shadow">
-              <img src="/logos/bcd-coffee-icon.png?v=bcd" alt={brandName} className="size-7 object-contain" />
-            </div>
+            {appHome ? (
+              <Link
+                href={appHome}
+                aria-label="Beranda aplikasi"
+                className="flex h-11 items-center gap-1 rounded-full bg-white/95 pl-2 pr-3 text-gray-800 shadow"
+              >
+                <ChevronLeft className="size-5" />
+                <img src="/logos/bcd-coffee-icon.png?v=bcd" alt={brandName} className="size-7 object-contain" />
+              </Link>
+            ) : (
+              <div className="flex size-11 items-center justify-center rounded-full bg-white/95 shadow">
+                <img src="/logos/bcd-coffee-icon.png?v=bcd" alt={brandName} className="size-7 object-contain" />
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -526,12 +569,18 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h1 className="text-[15px] font-bold leading-snug text-gray-900">
-                  {brandName} — Meja {tableLabel}
+                  {brandName} — {pickupMode ? "Pickup" : placeLabel(tableLabel)}
                 </h1>
                 <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-gray-600">
-                  <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-1.5 py-0.5 font-bold text-emerald-700">
-                    BUKA
-                  </span>
+                  {pickupMode && !session?.pickup_open ? (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-red-50 px-1.5 py-0.5 font-bold text-red-700">
+                      PICKUP TUTUP
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-1.5 py-0.5 font-bold text-emerald-700">
+                      BUKA
+                    </span>
+                  )}
                   {xpEnabled && (
                     <>
                       <span className="text-gray-300">·</span>
@@ -543,16 +592,19 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
                   <span className="text-gray-300">·</span>
                   <span className="inline-flex items-center gap-1">
                     <MapPin className="size-3.5 text-primary" />
-                    {session?.table_area || "Antar ke meja"}
+                    {pickupMode ? "Ambil di kasir" : session?.table_area || "Antar ke meja"}
                   </span>
                 </div>
                 <div className="mt-1 text-xs font-semibold text-gray-700">
-                  {anyQris ? "Bayar QRIS / di kasir" : "Bayar di kasir"} · Est. 10–20 mnt
+                  {pickupMode
+                    ? "Bayar dulu (QRIS / ARK) · pilih jam ambil"
+                    : `${anyQris ? "Bayar QRIS / di kasir" : "Bayar di kasir"} · Est. 10–20 mnt`}
                 </div>
               </div>
               <ChevronRight className="mt-1 size-5 shrink-0 text-gray-400" />
             </div>
 
+            {!pickupMode && (
             <div className="mt-3 grid grid-cols-2 rounded-full bg-gray-100 p-1 text-sm font-semibold">
               {(
                 [
@@ -572,6 +624,7 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
                 </button>
               ))}
             </div>
+            )}
 
             <div className="mt-3 border-t border-dashed border-gray-200 pt-3">
               <div className="flex flex-wrap gap-2">
@@ -756,12 +809,12 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
           <button
             ref={cartBarRef}
             type="button"
-            onClick={() => setCartOpen(true)}
+            onClick={openCart}
             className="mx-auto flex h-13 w-full max-w-md items-center justify-between rounded-2xl bg-primary px-4 py-3 text-left text-white shadow-lg shadow-black/10"
           >
             <span>
               <span className="block text-xs text-white/75">
-                <span data-cart-count>{summary.totalItems}</span> item · Meja {tableLabel}
+                <span data-cart-count>{summary.totalItems}</span> item · {placeLabel(tableLabel)}
               </span>
               <span className="block text-base font-bold">{formatRupiah(summary.total)}</span>
             </span>
@@ -796,6 +849,11 @@ export function TableOrderApp({ tableCode }: { tableCode: string }) {
         member={member}
         orderType={orderType}
         onOrderType={setOrderType}
+        pickup={
+          pickupMode
+            ? { open: Boolean(session?.pickup_open), slots: pickupSlotList, value: effectivePickupAt, onChange: setPickupAt }
+            : null
+        }
         paymentMethod={effectivePaymentMethod}
         onPaymentMethod={setPaymentMethod}
         note={note}

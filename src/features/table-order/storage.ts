@@ -13,6 +13,8 @@ type Stored = {
 };
 
 const TTL_MS = 6 * 60 * 60 * 1000; // 6 jam — cukup utk satu kunjungan
+// Pickup (EPIC-053) bisa dijadwalkan s/d 8 jam ke depan → simpan sehari.
+const PICKUP_TTL_MS = 24 * 60 * 60 * 1000;
 
 function key(tableCode: string) {
   return `table-order:${tableCode.toUpperCase()}`;
@@ -23,7 +25,8 @@ export function readTableState(tableCode: string): Stored {
     const raw = window.localStorage.getItem(key(tableCode));
     if (!raw) return {};
     const parsed = JSON.parse(raw) as Stored;
-    if (parsed.savedAt && Date.now() - parsed.savedAt > TTL_MS) {
+    const ttl = tableCode.toUpperCase() === "PICKUP" ? PICKUP_TTL_MS : TTL_MS;
+    if (parsed.savedAt && Date.now() - parsed.savedAt > ttl) {
       window.localStorage.removeItem(key(tableCode));
       return {};
     }

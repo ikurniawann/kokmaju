@@ -27,6 +27,11 @@ const PUBLIC_AUTH_PREFIXES = [
   "/portal",
   "/career",
   "/table-order",
+  // Aplikasi pelanggan PWA (owner 2026-10-11): beranda/pickup, manifest,
+  // service worker & ikon harus terbuka tanpa sesi dashboard.
+  "/pesan",
+  "/sw-pelanggan.js",
+  "/app-icons/",
   "/photobooth",
   "/api/job-openings/public",
   "/api/portal",

@@ -11,6 +11,7 @@ import { useUpdatePaymentGateway } from "../mutations";
 import { usePaymentGateways } from "../queries";
 import type { PaymentGatewayEnvironment, PaymentGatewayPublic } from "../types";
 import { StaticQrisCard } from "./static-qris-card";
+import { PickupToggle } from "@/features/pos/self-orders/components/pickup-toggle";
 
 type Draft = {
   is_active: boolean;
@@ -140,6 +141,7 @@ export function PaymentGatewaysPage() {
       </div>
 
       <StaticQrisCard />
+      <PickupToggle className="p-5" />
     </div>
   );
 }

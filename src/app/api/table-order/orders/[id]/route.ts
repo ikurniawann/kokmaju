@@ -29,6 +29,7 @@ type OrderRow = {
   xendit_qr_id: string | null;
   xendit_external_id: string | null;
   payment_proof_uploaded_at: string | null;
+  pickup_at: string | Date | null;
 };
 
 type ItemRow = {
@@ -55,7 +56,7 @@ async function loadOrder(orderId: string) {
             COALESCE(other_charges_amount, 0)::float AS other_charges_amount,
             total_amount::float AS total_amount, charges_breakdown,
             special_requests, ordered_at, xendit_qr_id, xendit_external_id,
-            payment_proof_uploaded_at
+            payment_proof_uploaded_at, pickup_at
      FROM pos.pos_orders WHERE id = $1 LIMIT 1`,
     [orderId]
   );
@@ -174,6 +175,7 @@ export async function GET(
           kitchen_status: item.kitchen_status,
         })),
         payment_proof_uploaded_at: order.payment_proof_uploaded_at,
+        pickup_at: order.pickup_at ? new Date(order.pickup_at).toISOString() : null,
         qris,
         qris_status: qrisStatus,
         qris_check_error: qrisCheckError,

@@ -58,3 +58,20 @@ describe("recency & waktu", () => {
     expect(timeAgoText(null, now)).toBe("");
   });
 });
+
+// Pickup (owner 2026-10-11, EPIC-053): QRIS dinamis belum dibayar tidak
+// mengganggu kasir; QRIS statis tetap tampil (kasir cek bukti); lunas tampil.
+describe("pickIncomingSelfOrders — pickup", () => {
+  const pickup = (id: string, flow: string, payment_status: string) => ({
+    id,
+    status: "pending",
+    special_requests: `Self-service table order PICKUP; payment=${flow}`,
+    ordered_at: "2026-10-11T03:00:00Z",
+    pickup_at: "2026-10-11T05:00:00Z",
+    payment_status,
+  });
+  it("menyembunyikan pickup QRIS yang belum dibayar saja", () => {
+    const list = [pickup("qris-unpaid", "qris", "unpaid"), pickup("qris-paid", "qris", "paid"), pickup("static", "static_qris", "unpaid")];
+    expect(pickIncomingSelfOrders(list).map((o) => o.id)).toEqual(["qris-paid", "static"]);
+  });
+});

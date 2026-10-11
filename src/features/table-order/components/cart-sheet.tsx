@@ -7,6 +7,17 @@ import type { TableOrderPaymentMethod, TableOrderType } from "@/lib/table-order/
 import { memberPrice, type CartLine, type CartSummary } from "@/lib/table-order/pricing";
 import type { MemberProfile, TableSession } from "../api";
 import { BottomSheet } from "./sheet";
+import { formatPickupTime } from "@/lib/table-order/pickup";
+
+/** Mode pickup (EPIC-053): tanpa meja, wajib bayar dulu, pilih jam ambil. */
+export type CartPickup = {
+  open: boolean;
+  /** Pilihan jam ambil (ISO) hari ini. */
+  slots: string[];
+  /** null = secepatnya */
+  value: string | null;
+  onChange: (value: string | null) => void;
+};
 
 export function CartSheet({
   open,
@@ -30,7 +41,9 @@ export function CartSheet({
   onSubmit,
   arkEnabled = true,
   xpEnabled = true,
+  pickup = null,
 }: {
+  pickup?: CartPickup | null;
   /** Saklar CRM → Pengaturan: sembunyikan opsi ARK Coin / info XP bila mati. */
   arkEnabled?: boolean;
   xpEnabled?: boolean;
@@ -64,7 +77,8 @@ export function CartSheet({
     !submitting &&
     (paymentMethod !== "ark_coin" || (Boolean(member) && arkEnough)) &&
     (paymentMethod !== "qris" || qrisAvailable) &&
-    (paymentMethod !== "static_qris" || staticQrisAvailable);
+    (paymentMethod !== "static_qris" || staticQrisAvailable) &&
+    (!pickup || (pickup.open && paymentMethod !== "cashier"));
 
   return (
     <BottomSheet
@@ -98,6 +112,39 @@ export function CartSheet({
         </div>
       ) : (
         <div className="space-y-5">
+          {pickup ? (
+            <div>
+              <div className="text-sm font-bold text-gray-900">Waktu ambil di kasir</div>
+              {!pickup.open ? (
+                <div className="mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  Pickup sedang tutup — coba lagi nanti atau pesan dari meja.
+                </div>
+              ) : (
+                <div className="-mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1" role="radiogroup" aria-label="Waktu ambil">
+                  {[null, ...pickup.slots].map((slot) => {
+                    const active = pickup.value === slot;
+                    return (
+                      <button
+                        key={slot ?? "asap"}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        onClick={() => pickup.onChange(slot)}
+                        className={`h-10 shrink-0 rounded-full border px-4 text-sm font-semibold transition ${
+                          active ? "border-primary bg-primary text-white shadow" : "border-gray-200 bg-white text-gray-700"
+                        }`}
+                      >
+                        {slot ? formatPickupTime(slot) : "Secepatnya"}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <p className="mt-1.5 text-xs text-gray-500">
+                Bayar sekarang; pesanan dibuat menjelang jam ambil. Tunjukkan nomor antrean ke kasir.
+              </p>
+            </div>
+          ) : (
           <div className="grid grid-cols-2 rounded-full bg-gray-100 p-1 text-sm font-semibold">
             {(
               [
@@ -117,6 +164,7 @@ export function CartSheet({
               </button>
             ))}
           </div>
+          )}
 
           <div className="divide-y divide-gray-100 rounded-2xl border border-gray-200">
             {cart.map((line) => (
@@ -276,13 +324,15 @@ export function CartSheet({
                 onClick={() => (member ? onPaymentMethod("ark_coin") : onOpenMember())}
               />
               )}
-              <PaymentOption
-                active={paymentMethod === "cashier"}
-                icon={WalletCards}
-                title="Bayar di kasir"
-                description="Pesanan masuk sebagai open bill, bayar saat selesai."
-                onClick={() => onPaymentMethod("cashier")}
-              />
+              {!pickup && (
+                <PaymentOption
+                  active={paymentMethod === "cashier"}
+                  icon={WalletCards}
+                  title="Bayar di kasir"
+                  description="Pesanan masuk sebagai open bill, bayar saat selesai."
+                  onClick={() => onPaymentMethod("cashier")}
+                />
+              )}
             </div>
           </div>
 

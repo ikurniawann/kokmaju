@@ -104,6 +104,10 @@ vi.mock("@/lib/pos/accounting-posting", () => ({
 vi.mock("@/lib/pos/queue-number", () => ({
   allocateQueueNumber: vi.fn(async () => "A-007"),
 }));
+const pickupSetting = vi.fn(async (_key: string) => "true" as string | null);
+vi.mock("@/lib/settings/app-settings", () => ({
+  getSetting: (key: string) => pickupSetting(key),
+}));
 vi.mock("@/lib/rate-limit", () => ({
   checkRateLimit: vi.fn(() => ({ allowed: true, remaining: 10, resetTime: 0 })),
 }));
@@ -250,6 +254,8 @@ beforeEach(() => {
   fireOrderAlert.mockClear();
   loadStatic.mockReset();
   loadStatic.mockResolvedValue({ enabled: false, imageUrl: null, available: false });
+  pickupSetting.mockReset();
+  pickupSetting.mockResolvedValue("true");
 });
 
 describe("POST /api/table-order/orders — harga dari server", () => {
@@ -598,5 +604,72 @@ describe("POST /api/table-order/orders — nomor WA & nama wajib", () => {
     expect(order.customer_id).toBe("cust-1");
     expect(order.contact_phone).toBeNull();
     expect(fireOrderAlert.mock.calls[0][0]).toMatchObject({ guestName: "Riksa", guestPhone: "6281200001111", isMember: true });
+  });
+});
+
+// Pickup tanpa meja (owner 2026-10-11, EPIC-053): wajib bayar dulu, jam ambil
+// divalidasi server, dapur ditahan sampai kitchen_release_at.
+describe("POST /api/table-order/orders — pickup", () => {
+  const item = { product_id: PRODUCT_ID, variant_id: "reg", quantity: 1 };
+
+  it("saklar pickup tutup → 409 tanpa insert", async () => {
+    pickupSetting.mockResolvedValue("false");
+    const { status, json } = await post({ table_code: "PICKUP", payment_method: "qris", items: [item] });
+    expect(status).toBe(409);
+    expect(String(json.error)).toMatch(/pickup sedang tutup/i);
+    expect(fake.calls.some((c) => c.action === "insert")).toBe(false);
+  });
+
+  it("bayar di kasir ditolak → 400 (wajib bayar dulu)", async () => {
+    const { status, json } = await post({ table_code: "PICKUP", payment_method: "cashier", items: [item] });
+    expect(status).toBe(400);
+    expect(String(json.error)).toMatch(/wajib dibayar dulu/);
+    expect(fake.calls.some((c) => c.action === "insert")).toBe(false);
+  });
+
+  it("jam ambil terjadwal → takeaway, tanpa meja, pickup_at & kitchen_release_at tersimpan", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-11T03:07:00Z")); // 10:07 WIB
+    try {
+      const { status, json } = await post({
+        table_code: "PICKUP",
+        order_type: "dine_in",
+        payment_method: "qris",
+        pickup_at: "2026-10-11T05:00:00Z", // 12:00 WIB
+        items: [item],
+      });
+      expect(status).toBe(201);
+      const order = fake.calls.find((c) => c.table === "pos_orders" && c.action === "insert")?.payload as Record<string, unknown>;
+      expect(order.order_type).toBe("takeaway");
+      expect(order.table_id).toBeNull();
+      expect(order.pickup_at).toBe("2026-10-11T05:00:00.000Z");
+      // prep minimal 10 mnt + 10 → dapur mulai 20 mnt sebelum jam ambil (11:40)
+      expect(order.kitchen_release_at).toBe("2026-10-11T04:40:00.000Z");
+      expect(String(order.notes)).toContain("Ambil jam 12:00 WIB");
+      expect((json.data as Record<string, unknown>).pickup_at).toBe("2026-10-11T05:00:00.000Z");
+      expect(fireOrderAlert.mock.calls[0][0]).toMatchObject({ tableLabel: "Pickup 12:00", orderType: "takeaway" });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("jam ambil besok → 400 sebelum insert", async () => {
+    const tomorrow = new Date(Date.now() + 26 * 3600_000).toISOString();
+    const { status } = await post({ table_code: "PICKUP", payment_method: "qris", pickup_at: tomorrow, items: [item] });
+    expect(status).toBe(400);
+    expect(fake.calls.some((c) => c.action === "insert")).toBe(false);
+  });
+
+  it("QRIS gagal dibuat → pesanan dibatalkan & 503 (bukan open bill bayar di kasir)", async () => {
+    ensureQris.mockRejectedValueOnce(new Error("Xendit timeout"));
+    fake = createFakeDb(
+      { ...baseDbResponses(), pos_orders: [{ data: { id: "order-1" }, error: null }, { data: null, error: null }] },
+      rpcOk
+    );
+    const { status } = await post({ table_code: "PICKUP", payment_method: "qris", items: [item] });
+    expect(status).toBe(503);
+    const cancel = fake.calls.find((c) => c.table === "pos_orders" && c.action === "update")?.payload as Record<string, unknown>;
+    expect(cancel.status).toBe("cancelled");
+    expect(fireOrderAlert).not.toHaveBeenCalled();
   });
 });

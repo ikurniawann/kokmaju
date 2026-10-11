@@ -1,5 +1,6 @@
 "use client";
 
+import { placeLabel } from "@/lib/table-order/pickup";
 import { useCallback, useEffect, useState } from "react";
 import { ChevronRight, RefreshCw } from "lucide-react";
 import { formatRupiah } from "@/lib/table-order/menu";
@@ -65,7 +66,7 @@ export function MyOrdersList({
     <div className="pb-28">
       <div className="bg-primary px-5 pb-14 pt-6 text-white">
         <div className="text-xs font-semibold uppercase tracking-wide text-white/70">{brandName}</div>
-        <div className="mt-1 text-sm text-white/80">Meja {tableLabel}</div>
+        <div className="mt-1 text-sm text-white/80">{placeLabel(tableLabel)}</div>
         <div className="mt-4 flex items-end justify-between gap-3">
           <div className="text-2xl font-black">Pesanan saya ({orders.length})</div>
           {outstanding > 0 ? (

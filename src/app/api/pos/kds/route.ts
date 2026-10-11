@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPgClient } from "@/lib/pg/create-client";
+import { isHeldFromKitchen, pickupLabel } from "@/lib/table-order/pickup";
 import { requirePosMenu } from '@/lib/api/auth';
 import { IAM } from '@/lib/iam/prefixes';
 import { normalizeStation } from '@/lib/pos/kitchen-station';
@@ -41,6 +42,9 @@ type KDSOrderRow = {
   special_requests?: string | null;
   ordered_at?: string | null;
   confirmed_at?: string | null;
+  /** Pickup terjadwal (EPIC-053) */
+  pickup_at?: string | null;
+  kitchen_release_at?: string | null;
   pos_order_items?: KDSOrderItemRow[] | null;
 };
 
@@ -126,6 +130,8 @@ export async function GET(request: NextRequest) {
       special_requests,
       ordered_at,
       confirmed_at,
+      pickup_at,
+      kitchen_release_at,
       pos_order_items (
         id,
         product_id,
@@ -221,7 +227,10 @@ export async function GET(request: NextRequest) {
   }
 
   const wantedStation = station ? station.toLowerCase() : null;
+  const nowDate = new Date();
   const orders = orderRows
+    // Pickup terjadwal (EPIC-053): tahan sampai LUNAS & mendekati jam ambil.
+    .filter((order) => !isHeldFromKitchen(order, nowDate))
     .map((order) => {
       const items = (order.pos_order_items || [])
         .map((item) => {
@@ -246,9 +255,11 @@ export async function GET(request: NextRequest) {
         ...order,
         station_status: stationStatus,
         status: wantedStation ? stationStatus : order.status,
-        table_label: order.table_id
-          ? tableById.get(order.table_id)?.table_number || tableById.get(order.table_id)?.qr_code || null
-          : null,
+        table_label: order.pickup_at
+          ? pickupLabel(order.pickup_at)
+          : order.table_id
+            ? tableById.get(order.table_id)?.table_number || tableById.get(order.table_id)?.qr_code || null
+            : null,
         pos_order_items: items,
       };
     })
@@ -256,7 +267,9 @@ export async function GET(request: NextRequest) {
 
   const now = Date.now();
   const ordersWithWait = orders.map((order) => {
-    const orderedAt = order.ordered_at ? new Date(order.ordered_at).getTime() : now;
+    // Pickup: waktu tunggu dihitung sejak dilepas ke dapur, bukan sejak dipesan.
+    const startedAt = order.kitchen_release_at || order.ordered_at;
+    const orderedAt = startedAt ? new Date(startedAt).getTime() : now;
     const waitSeconds = Math.floor((now - orderedAt) / 1000);
     const waitMinutes = Math.floor(waitSeconds / 60);
     return {

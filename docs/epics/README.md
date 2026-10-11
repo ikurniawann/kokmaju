@@ -55,6 +55,7 @@ deploying-dev · ready-for-qa · blocked · done).
 | [EPIC-050](./EPIC-050-crm-advance-zoho-salesforce.md) | CRM Advance — Menuju Setara Zoho / Salesforce (Account, Tasks, Scoring, Workflow, Forecast, Report Builder; Email ditunda) | on-progress | 2026-09-13 |
 | [EPIC-051](./EPIC-051-tagihan-member.md) | Tagihan Member — Cicilan Order Member (POS → Operasional → Tagihan) | ready-for-qa | 2026-10-01 |
 | [EPIC-052](./EPIC-052-bcd-twin.md) | BCD Twin — Visual 3D Coffee Shop per Divisi (live + mode demo) | ready-for-qa | 2026-10-11 |
+| [EPIC-053](./EPIC-053-aplikasi-pelanggan-pwa-pickup.md) | Aplikasi Pelanggan (PWA) + Pickup Terjadwal (bayar dulu, pilih jam ambil) | ready-for-qa | 2026-10-11 |
 
 Aturan:
 - Epic + registry ini adalah sumber kebenaran status pekerjaan (canonical).

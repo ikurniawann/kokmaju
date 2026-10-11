@@ -25,6 +25,17 @@ import { rejectIfArkCoinDisabled } from "@/lib/crm/loyalty-features-server";
 import { fireOrderAlert } from "@/lib/notifications/order-alert-server";
 import { paymentMethodText } from "@/lib/table-order/order-status";
 import { validateGuest, type GuestIdentity } from "@/lib/table-order/guest";
+import { getSetting } from "@/lib/settings/app-settings";
+import {
+  PICKUP_PAYMENT_METHODS,
+  PICKUP_SETTING_KEY,
+  estimatePrepMinutes,
+  formatPickupTime,
+  isPickupCode,
+  pickupLabel,
+  planPickup,
+  type PickupPlan,
+} from "@/lib/table-order/pickup";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +73,8 @@ const createOrderSchema = z.object({
   guest_name: z.string().trim().max(80).optional(),
   /** Wajib bila bukan member login (owner 2026-09-28) — tanpa OTP. */
   guest_phone: z.string().trim().max(30).optional(),
+  /** Pickup (table_code PICKUP): jam ambil ISO; null/absen = secepatnya. */
+  pickup_at: z.string().datetime({ offset: true }).nullable().optional(),
 });
 
 /** Link layar kasir "Buatkan Pesanan" utk notifikasi WA/Telegram (null bila URL app tak diketahui). */
@@ -91,6 +104,17 @@ export async function POST(request: NextRequest) {
       return fail("Data pesanan tidak valid", 400);
     }
     const payload = parsed.data;
+    // Pickup tanpa meja (EPIC-053): harus dibuka admin, wajib bayar dulu.
+    const isPickup = isPickupCode(payload.table_code);
+    if (isPickup) {
+      if ((await getSetting(PICKUP_SETTING_KEY)) !== "true") {
+        return fail("Pesanan pickup sedang tutup", 409);
+      }
+      if (!(PICKUP_PAYMENT_METHODS as readonly string[]).includes(payload.payment_method)) {
+        return fail("Pickup wajib dibayar dulu — pilih QRIS atau ARK Coin", 400);
+      }
+      payload.order_type = "takeaway";
+    }
     const db = createPgClient();
     const arkBlocked = await rejectIfArkCoinDisabled(payload.payment_method === "ark_coin");
     if (arkBlocked) return arkBlocked;
@@ -151,6 +175,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    let pickup: PickupPlan | null = null;
+    if (isPickup) {
+      const prep = estimatePrepMinutes(payload.items.map((item) => products.get(item.product_id)?.prepTimeMinutes ?? 0));
+      const planned = planPickup(payload.pickup_at ?? null, prep, new Date());
+      if (!planned.ok) return fail(planned.error, 400);
+      pickup = planned.plan;
+    }
+
     const privilege = await checkProductPrivileges(
       db,
       lines.map((line) => line.product_id),
@@ -192,7 +224,7 @@ export async function POST(request: NextRequest) {
       return fail("Static QRIS belum tersedia di venue ini — pilih Bayar di Kasir", 503);
     }
 
-    const table = await loadTableByCode(payload.table_code).catch(() => null);
+    const table = isPickup ? null : await loadTableByCode(payload.table_code).catch(() => null);
     const tableId = table && table.is_active !== false ? table.id : null;
     const tableCode = payload.table_code.toUpperCase();
     const selfPaid = payload.payment_method === "ark_coin";
@@ -224,6 +256,7 @@ export async function POST(request: NextRequest) {
     const orderStatus = selfPaid ? "confirmed" : "pending";
     const noteParts = [
       `${TABLE_ORDER_TAG} ${tableCode}`,
+      pickup ? `Ambil ${pickup.asap ? "secepatnya ±" : "jam"} ${formatPickupTime(pickup.pickupAt)} WIB` : null,
       guest ? `Atas nama: ${guest.name} · WA ${guest.phone}` : null,
       payload.customer_note ? `Catatan: ${payload.customer_note}` : null,
     ].filter(Boolean);
@@ -254,6 +287,8 @@ export async function POST(request: NextRequest) {
         ordered_at: new Date().toISOString(),
         contact_name: guest?.name ?? null,
         contact_phone: guest?.phone ?? null,
+        pickup_at: pickup?.pickupAt.toISOString() ?? null,
+        kitchen_release_at: pickup?.kitchenReleaseAt.toISOString() ?? null,
         company_id: venue.companyId,
         branch_id: venue.branchId,
       })
@@ -315,6 +350,14 @@ export async function POST(request: NextRequest) {
         // Order tetap tersimpan sebagai open bill — pemesan diarahkan bayar di kasir.
         qrisError = error instanceof Error ? error.message : "Gagal membuat QRIS";
         console.error(`[table-order] qris create failed order=${orderId}:`, qrisError);
+        if (isPickup) {
+          // Pickup wajib bayar dulu → tanpa QRIS pesanan dibatalkan, bukan jadi open bill.
+          await db
+            .from("pos_orders")
+            .update({ status: "cancelled", cancelled_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+            .eq("id", orderId);
+          return fail("QRIS gagal dibuat — coba lagi sebentar", 503);
+        }
         await db
           .from("pos_orders")
           .update({
@@ -365,7 +408,7 @@ export async function POST(request: NextRequest) {
     fireOrderAlert({
       brandName: venue.brandName,
       sourceLabel: "Self-order QR",
-      tableLabel: tableLabel(tableId ? table : null, tableCode),
+      tableLabel: pickup ? pickupLabel(pickup.pickupAt) : tableLabel(tableId ? table : null, tableCode),
       orderType: payload.order_type,
       queueNumber,
       orderNumber,
@@ -398,6 +441,7 @@ export async function POST(request: NextRequest) {
           order_type: payload.order_type,
           table_code: tableCode,
           table_resolved: Boolean(tableId),
+          pickup_at: pickup?.pickupAt.toISOString() ?? null,
           subtotal,
           discount_amount: discountAmount,
           tax_amount: bill.tax_amount,

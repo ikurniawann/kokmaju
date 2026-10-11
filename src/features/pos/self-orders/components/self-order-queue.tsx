@@ -10,6 +10,7 @@ import type { Order } from "@/lib/pos-api";
 import { orderCustomerLabel } from "@/lib/pos/order-customer";
 import { selfOrderPaymentFlow, selfOrderTableCode, splitByRecency, timeAgoText } from "@/lib/table-order/incoming";
 import { orderTypeText, paymentMethodText } from "@/lib/table-order/order-status";
+import { pickupLabel } from "@/lib/table-order/pickup";
 import { cn } from "@/lib/utils";
 import { acceptSelfOrder, fetchIncomingSelfOrders, selfOrdersQueryKey } from "../api";
 
@@ -152,7 +153,9 @@ export function SelfOrderQueue({
                 <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
                   <span className="inline-flex items-center gap-1">
                     <MapPin className="size-3" />
-                    {order.table?.table_number || selfOrderTableCode(order) || "Tanpa meja"}
+                    {order.pickup_at
+                      ? pickupLabel(order.pickup_at)
+                      : order.table?.table_number || selfOrderTableCode(order) || "Tanpa meja"}
                   </span>
                   <span>· {orderTypeText(order.order_type)}</span>
                   <span className="inline-flex items-center gap-1">
@@ -162,8 +165,14 @@ export function SelfOrderQueue({
               </div>
               <div className="shrink-0 text-right">
                 <div className="text-base font-bold tabular-nums text-foreground">{rupiah(order.total_amount)}</div>
-                <div className="text-[11px] font-medium text-amber-700">
-                  {paymentMethodText(selfOrderPaymentFlow(order))} · belum dibayar
+                <div
+                  className={cn(
+                    "text-[11px] font-medium",
+                    order.payment_status === "paid" ? "text-emerald-700" : "text-amber-700"
+                  )}
+                >
+                  {paymentMethodText(selfOrderPaymentFlow(order))} ·{" "}
+                  {order.payment_status === "paid" ? "lunas" : "belum dibayar"}
                 </div>
               </div>
             </div>

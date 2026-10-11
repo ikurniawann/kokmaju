@@ -11,6 +11,11 @@ describe("isPublicAuthPath", () => {
     expect(isPublicAuthPath("/qris/qris-logo.svg")).toBe(true);
     expect(isPublicAuthPath("/table-order/TBL-501-SEED")).toBe(true);
     expect(isPublicAuthPath("/api/table-order/products")).toBe(true);
+    expect(isPublicAuthPath("/pesan")).toBe(true);
+    expect(isPublicAuthPath("/pesan/ambil")).toBe(true);
+    expect(isPublicAuthPath("/pesan/manifest.webmanifest")).toBe(true);
+    expect(isPublicAuthPath("/sw-pelanggan.js")).toBe(true);
+    expect(isPublicAuthPath("/app-icons/icon-192.png")).toBe(true);
   });
 
   it("allows the GoBiz webhook receiver (token in path) but not its settings API", () => {
