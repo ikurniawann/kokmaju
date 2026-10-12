@@ -47,7 +47,7 @@ export async function postPosSaleAccountingJournals(opts: {
   }
 
   const method = opts.paymentMethod ?? built.paymentMethod;
-  const saleEvent = mapPaymentMethodToSaleEvent(method);
+  const saleEvent = mapPaymentMethodToSaleEvent(method, built.paymentMethodCode);
   if (saleEvent === "SKIP_NFC_TAB") {
     return {
       results: [

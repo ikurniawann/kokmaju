@@ -73,10 +73,17 @@ export function computePosAccountingAmounts(input: {
 }
 
 export function mapPaymentMethodToSaleEvent(
-  method?: string | null
+  method?: string | null,
+  /** pos_orders.payment_method_code — metode katalog (mis. static_qris). */
+  methodCode?: string | null
 ): PosSaleEventResult {
   const value = String(method || "").trim().toLowerCase();
   if (!value) return null;
+  // Static QRIS memakai alur kasir non-tunai generik (credit) tapi uangnya
+  // masuk rekening QRIS → jurnal QRIS (owner 2026-10-12).
+  if (String(methodCode || "").trim().toLowerCase() === "static_qris" && (value === "credit" || value === "credit_card")) {
+    return "POS_SALE_QRIS";
+  }
   if (value === "nfc_tab") return "SKIP_NFC_TAB";
   if (value === "cash") return "POS_SALE_CASH";
   if (value === "qris") return "POS_SALE_QRIS";
@@ -99,12 +106,13 @@ export async function buildPosAccountingAmounts(
   entryDate: string;
   orderNumber: string;
   paymentMethod: string | null;
+  paymentMethodCode: string | null;
   paymentStatus: string | null;
 }> {
   const { data: order, error } = await db
     .from("pos_orders")
     .select(
-      "id, order_number, company_id, branch_id, ordered_at, payment_method, payment_status, subtotal, discount_amount, tax_amount, service_charge_amount, other_charges_amount, total_amount, amount_paid"
+      "id, order_number, company_id, branch_id, ordered_at, payment_method, payment_method_code, payment_status, subtotal, discount_amount, tax_amount, service_charge_amount, other_charges_amount, total_amount, amount_paid"
     )
     .eq("id", orderId)
     .single();
@@ -131,6 +139,7 @@ export async function buildPosAccountingAmounts(
     entryDate: toJournalEntryDate(order.ordered_at as string | Date | null),
     orderNumber: String(order.order_number || orderId),
     paymentMethod: (order.payment_method as string | null) || null,
+    paymentMethodCode: (order.payment_method_code as string | null) || null,
     paymentStatus: (order.payment_status as string | null) || null,
     amounts: computePosAccountingAmounts({
       subtotal: Number(order.subtotal) || 0,

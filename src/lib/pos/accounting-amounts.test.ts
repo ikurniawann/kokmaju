@@ -63,6 +63,12 @@ describe("toJournalEntryDate", () => {
 });
 
 describe("mapPaymentMethodToSaleEvent", () => {
+  it("Static QRIS (kode katalog) di alur non-tunai → jurnal QRIS, bukan kartu kredit", () => {
+    expect(mapPaymentMethodToSaleEvent("credit_card", "static_qris")).toBe("POS_SALE_QRIS");
+    expect(mapPaymentMethodToSaleEvent("credit", "STATIC_QRIS")).toBe("POS_SALE_QRIS");
+    expect(mapPaymentMethodToSaleEvent("credit_card", "transfer_bca")).toBe("POS_SALE_CREDIT");
+    expect(mapPaymentMethodToSaleEvent("cash", "static_qris")).toBe("POS_SALE_CASH");
+  });
   it("maps known POS methods to sale events", () => {
     expect(mapPaymentMethodToSaleEvent("cash")).toBe("POS_SALE_CASH");
     expect(mapPaymentMethodToSaleEvent("qris")).toBe("POS_SALE_QRIS");

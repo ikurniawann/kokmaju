@@ -104,7 +104,7 @@ export async function updatePosPaymentMethod(
     if (!canRenamePaymentMethodCode(normalized)) {
       throw new Error("Kode metode bawaan tidak bisa diubah");
     }
-    if (isPosPaymentMethodCode(nextCode)) {
+    if (PROTECTED_PAYMENT_METHOD_CODES.has(nextCode)) {
       throw new Error("Kode itu dipakai metode bawaan");
     }
     if (nextCode !== normalized) {

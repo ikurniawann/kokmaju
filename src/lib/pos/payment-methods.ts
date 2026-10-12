@@ -49,10 +49,19 @@ export const POS_PAYMENT_METHOD_CODES: PosPaymentMethodCode[] = [
   "gift_card",
 ];
 
+/**
+ * Static QRIS di kasir (owner 2026-10-12): gambar QRIS statis venue (Settings →
+ * Payment Gateways) dipindai pelanggan, kasir konfirmasi manual. Alur kasir
+ * generik non-tunai (handler `credit`), dicatat dgn kode ini → laporan
+ * "Static QRIS" & jurnal akun QRIS (bukan kartu kredit).
+ */
+export const STATIC_QRIS_PAYMENT_CODE = "static_qris";
+
 /** Kode bawaan ber-alur khusus — tidak boleh dihapus dari master. */
-export const PROTECTED_PAYMENT_METHOD_CODES = new Set<string>(
-  POS_PAYMENT_METHOD_CODES
-);
+export const PROTECTED_PAYMENT_METHOD_CODES = new Set<string>([
+  ...POS_PAYMENT_METHOD_CODES,
+  STATIC_QRIS_PAYMENT_CODE,
+]);
 
 /** Slug kode metode (bawaan maupun kustom): huruf kecil/angka/-/_ 2-40. */
 export const PAYMENT_METHOD_CODE_PATTERN = /^[a-z0-9_-]{2,40}$/;
@@ -83,6 +92,17 @@ export const DEFAULT_POS_PAYMENT_METHODS: PosPaymentMethod[] = [
     handler: "qris",
     is_active: true,
     sort_order: 20,
+    requires_cash_input: false,
+  },
+  {
+    id: "fallback-static-qris",
+    code: STATIC_QRIS_PAYMENT_CODE,
+    name: "Static QRIS",
+    description: "Scan QRIS statis venue",
+    icon: "scan-line",
+    handler: "credit",
+    is_active: true,
+    sort_order: 25,
     requires_cash_input: false,
   },
   {
@@ -156,7 +176,7 @@ export function cashierMethodFromHandler(
 }
 
 export function canRenamePaymentMethodCode(code: string) {
-  return !isPosPaymentMethodCode(code);
+  return !PROTECTED_PAYMENT_METHOD_CODES.has(code);
 }
 
 export function slugifyPaymentMethodCode(value: string) {

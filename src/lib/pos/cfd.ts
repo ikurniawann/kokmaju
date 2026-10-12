@@ -33,6 +33,8 @@ export interface CfdPayment {
   qr_string?: string | null;
   /** QR sedang dibuat — display menampilkan spinner, bukan QR basi. */
   qr_loading?: boolean;
+  /** Static QRIS (method "static_qris"): gambar QRIS statis venue. */
+  qr_image_url?: string | null;
 }
 
 /**

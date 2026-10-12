@@ -57,3 +57,17 @@ export function useDeletePaymentMethod() {
     onError: (error: Error) => toast.error(error.message),
   });
 }
+
+/** Gambar QRIS statis venue utk metode bayar "Static QRIS" di kasir. */
+export function usePosStaticQris(enabled = true) {
+  return useQuery({
+    queryKey: ["pos", "static-qris"] as const,
+    queryFn: async (): Promise<{ available: boolean; imageUrl: string | null }> => {
+      const res = await fetch("/api/pos/static-qris", { credentials: "include", cache: "no-store" });
+      const json = (await res.json().catch(() => ({}))) as { data?: { available: boolean; imageUrl: string | null } };
+      return json.data ?? { available: false, imageUrl: null };
+    },
+    enabled,
+    staleTime: 60_000,
+  });
+}

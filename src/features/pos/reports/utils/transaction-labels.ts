@@ -1,4 +1,4 @@
-import { canRenamePaymentMethodCode } from "@/lib/pos/payment-methods";
+import { isPosPaymentMethodCode } from "@/lib/pos/payment-methods";
 
 /** Label laporan transaksi: bayar vs dapur, jangan campur. */
 
@@ -57,7 +57,8 @@ export function formatPaymentMethodLabel(
 ) {
   const catalogCode = key(catalog?.code);
   const catalogName = String(catalog?.name || "").trim();
-  if (catalogName && catalogCode && canRenamePaymentMethodCode(catalogCode)) {
+  // Metode katalog selain kode alur bawaan (kustom & Static QRIS) → pakai nama katalog.
+  if (catalogName && catalogCode && !isPosPaymentMethodCode(catalogCode)) {
     return catalogName;
   }
   const value = key(method);

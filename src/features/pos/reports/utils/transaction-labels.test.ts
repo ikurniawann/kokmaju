@@ -32,6 +32,11 @@ describe("formatPaymentMethodLabel", () => {
     expect(formatPaymentMethodLabel("credit")).toBe("Kartu");
   });
 
+  it("Static QRIS (owner 2026-10-12): alur credit tapi label nama katalog, bukan Kartu", () => {
+    expect(formatPaymentMethodLabel("credit", { code: "static_qris", name: "Static QRIS" })).toBe("Static QRIS");
+    expect(formatPaymentMethodLabel("credit", { code: "credit_card", name: "Credit Card" })).toBe("Kartu");
+  });
+
   it("prefers custom catalog name over cash/credit handler", () => {
     expect(
       formatPaymentMethodLabel("cash", {

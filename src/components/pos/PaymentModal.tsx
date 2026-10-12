@@ -9,6 +9,7 @@ import {
   Gift,
   Loader2,
   QrCode,
+  ScanLine,
   Ticket,
   Wifi,
   type LucideIcon,
@@ -48,8 +49,9 @@ import {
   cashierMethodFromHandler,
   DEFAULT_POS_PAYMENT_METHODS,
   isFocPaymentMethod,
+  STATIC_QRIS_PAYMENT_CODE,
 } from "@/lib/pos/payment-methods";
-import { usePaymentMethods } from "@/features/pos/payment-methods";
+import { usePaymentMethods, usePosStaticQris } from "@/features/pos/payment-methods";
 
 export type PaymentMethod =
   | "cash"
@@ -90,6 +92,8 @@ const ICON_BY_KEY: Record<string, LucideIcon> = {
   coins: Coins,
   ticket: Ticket,
   gift: Gift,
+  "scan-line": ScanLine,
+  static_qris: ScanLine,
   cash: Banknote,
   qris: QrCode,
   credit_card: CreditCard,
@@ -209,6 +213,9 @@ export function PaymentModal({
   onAbandonOrderQris,
 }: Props) {
   const methodsQuery = usePaymentMethods(true);
+  // Static QRIS (owner 2026-10-12): opsi muncul hanya bila aktif & gambar ada.
+  const staticQrisQuery = usePosStaticQris(open);
+  const staticQrisImage = staticQrisQuery.data?.available ? staticQrisQuery.data.imageUrl : null;
   const [method, setMethod] = useState<PaymentMethod>("cash");
   const [selectedCode, setSelectedCode] = useState("cash");
   const [cashReceived, setCashReceived] = useState("");
@@ -308,6 +315,7 @@ export function PaymentModal({
       .filter((option) => {
         if (option.code === "nfc_tab") return Boolean(onCheckNfcTab);
         if (option.code === "gift_card") return Boolean(onCheckGiftCard);
+        if (option.code === STATIC_QRIS_PAYMENT_CODE) return Boolean(staticQrisImage);
         return true;
       })
       .map((option) => ({
@@ -321,7 +329,7 @@ export function PaymentModal({
           Banknote,
         requiresCashInput: option.requires_cash_input,
       }));
-  }, [methodsQuery.data, onCheckGiftCard, onCheckNfcTab]);
+  }, [methodsQuery.data, onCheckGiftCard, onCheckNfcTab, staticQrisImage]);
 
   // Metode FOC terdeteksi dari kode/nama katalog — tagihan digratiskan,
   // jadi input tunai disembunyikan dan konfirmasi digerbang PIN supervisor.
@@ -721,15 +729,17 @@ export function PaymentModal({
       onCfdPayment(null);
       return;
     }
+    const staticQrisPicked = selectedCode === STATIC_QRIS_PAYMENT_CODE;
     onCfdPayment({
-      method,
+      method: staticQrisPicked ? STATIC_QRIS_PAYMENT_CODE : method,
+      qr_image_url: staticQrisPicked ? staticQrisImage : undefined,
       amount: totalAfterArk,
       cash_received: method === "cash" && cashAmount > 0 ? cashAmount : undefined,
       change: method === "cash" && cashAmount > 0 && change >= 0 ? change : undefined,
       qr_string: method === "qris" ? (qris?.qr_string ?? null) : undefined,
       qr_loading: method === "qris" ? qrisLoading : undefined,
     });
-  }, [open, method, cashAmount, change, totalAfterArk, qris, qrisLoading, onCfdPayment]);
+  }, [open, method, selectedCode, staticQrisImage, cashAmount, change, totalAfterArk, qris, qrisLoading, onCfdPayment]);
 
   const isValid = (() => {
     if (focSelected) {
@@ -904,6 +914,29 @@ export function PaymentModal({
                 >
                   {formatCurrency(Math.abs(change))}
                 </span>
+              </div>
+            </div>
+          )}
+
+          {selectedCode === STATIC_QRIS_PAYMENT_CODE && staticQrisImage && (
+            <div className="flex flex-col items-center gap-3 rounded-xl border border-gray-200/70 bg-muted/30 p-4 text-sm sm:flex-row sm:items-start">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={staticQrisImage}
+                alt="QRIS statis venue"
+                className="h-44 w-44 shrink-0 rounded-lg border border-gray-200 bg-white object-contain p-1"
+              />
+              <div className="space-y-1.5 text-muted-foreground">
+                <p className="font-semibold text-foreground">Pelanggan scan QRIS ini</p>
+                <p>
+                  Nominal diketik pelanggan sendiri:{" "}
+                  <span className="font-semibold text-foreground">{formatCurrency(totalAfterArk)}</span>
+                </p>
+                <p>QR juga tampil di Customer Display.</p>
+                <p className="flex items-start gap-1.5 text-amber-700">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                  Tidak terverifikasi otomatis — cek notifikasi/mutasi masuk dulu, baru tekan Confirm payment.
+                </p>
               </div>
             </div>
           )}

@@ -243,6 +243,21 @@ function IdleScreen() {
 
 function PaymentPanel({ state }: { state: CfdState }) {
   const payment = state.payment!;
+  // Static QRIS (owner 2026-10-12): gambar QRIS statis venue, nominal diketik pelanggan.
+  if (payment.method === "static_qris" && payment.qr_image_url && /^(https?:\/\/|\/)/.test(payment.qr_image_url)) {
+    return (
+      <div className="flex flex-col items-center gap-4">
+        <p className="text-xl font-semibold text-gray-900">Scan untuk bayar</p>
+        <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-[0_6px_16px_rgba(0,0,0,0.08)]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={payment.qr_image_url} alt="QRIS" className="h-72 w-72 object-contain" />
+        </div>
+        <p className="text-sm text-gray-500">
+          Masukkan nominal <span className="font-semibold text-gray-900">{formatRp(payment.amount)}</span> di aplikasi pembayaran
+        </p>
+      </div>
+    );
+  }
   if (payment.method === "qris") {
     return (
       <div className="flex flex-col items-center gap-4">
