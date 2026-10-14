@@ -29,7 +29,7 @@ ENV NODE_ENV=production
 # NEXT_PUBLIC_* are read from the .env the CI build job renders out of
 # RUNTIME_CONFIG_CONTENT and inlined into the client bundle right here — see
 # the note in .dockerignore about why .env must NOT be excluded.
-RUN --mount=type=cache,target=/app/.next/cache \
+RUN --mount=type=cache,target=/app/.next/cache,id=bcd-coffee-next-cache \
     pnpm build
 
 FROM node:22-alpine AS runner
