@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AnimatedReceipt } from "@/lib/pos/receipt-animation";
 import { receiptBarcodeBars } from "../catalog";
+import { playReceiptSounds } from "../receipt-sound";
 import "./pay-receipt-animation.css";
 
 const rp = (n: number) => `${n < 0 ? "-" : ""}${Math.abs(Math.round(n)).toLocaleString("id-ID")}`;
@@ -21,6 +22,7 @@ export function PayReceiptAnimation({
   cashierName,
   paidAt,
   amountLabel,
+  sound = true,
 }: {
   receipt: AnimatedReceipt;
   /** Judul struk, mis. "GEROBAK KOMA". */
@@ -31,8 +33,35 @@ export function PayReceiptAnimation({
   paidAt: Date;
   /** Nominal di layar printer sebelum berubah jadi "LUNAS", mis. "Rp 26.400". */
   amountLabel: string;
+  /** Bunyi printer + potong kertas (dibaca saat animasi mulai). */
+  sound?: boolean;
 }) {
   const [instant, setInstant] = useState(false);
+  const stopSound = useRef<() => void>(() => {});
+  const soundRef = useRef(sound);
+
+  // Suara dijadwalkan sekali per putaran animasi (remount lewat `key`).
+  useEffect(() => {
+    soundRef.current = sound;
+    if (!sound) return;
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    stopSound.current = playReceiptSounds({ instant: reduced });
+    return () => stopSound.current();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hanya saat mulai; toggle mute diatur di bawah
+  }, []);
+  // Dimatikan di tengah animasi → hentikan bunyi yang sedang berjalan.
+  useEffect(() => {
+    soundRef.current = sound;
+    if (!sound) stopSound.current();
+  }, [sound]);
+
+  function skip() {
+    if (instant) return;
+    setInstant(true);
+    // Lewati: bunyi cetak dihentikan, langsung "cekrek" potong.
+    stopSound.current();
+    if (soundRef.current) stopSound.current = playReceiptSounds({ instant: true });
+  }
   const total = receipt.totals.find((line) => line.strong)?.amount ?? 0;
   const bars = receiptBarcodeBars(receipt.orderNumber ?? "");
   const when = paidAt.toLocaleString("id-ID", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
@@ -42,7 +71,7 @@ export function PayReceiptAnimation({
       className={`prx${instant ? " instant" : ""}`}
       role="img"
       aria-label={`Pembayaran lunas. Total Rp ${rp(total)}${receipt.queue ? `, antrian ${receipt.queue}` : ""}`}
-      onClick={() => setInstant(true)}
+      onClick={skip}
     >
       <div className="prx-stage">
         <div className="prx-feed" aria-hidden>

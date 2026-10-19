@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
-import { Printer, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Printer, Plus, Volume2, VolumeX } from "lucide-react";
 import type { AnimatedReceipt } from "@/lib/pos/receipt-animation";
 import { formatRupiah } from "@/lib/table-order/menu";
 import { PayReceiptAnimation } from "./pay-receipt-animation";
+import { readSoundEnabled, unlockReceiptAudio, writeSoundEnabled } from "../receipt-sound";
 
 export type KasirSale = {
   orderNumber: string | null;
@@ -47,11 +48,28 @@ export function KasirSuccess({
     const frame = requestAnimationFrame(() => window.scrollTo(0, 0));
     return () => cancelAnimationFrame(frame);
   }, []);
+  // Komponen ini dirender khusus klien (kasir-client.tsx) — localStorage aman.
+  const [sound, setSound] = useState(readSoundEnabled);
+  function toggleSound() {
+    const next = !sound;
+    if (next) unlockReceiptAudio();
+    setSound(next);
+    writeSoundEnabled(next);
+  }
 
   return (
     <main className="flex min-h-dvh flex-col bg-gray-100 text-gray-900">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-6">
-        <div className="text-center">
+        <div className="relative text-center">
+          <button
+            type="button"
+            onClick={toggleSound}
+            className="absolute right-0 top-0 flex size-9 items-center justify-center rounded-full bg-white text-gray-600 shadow-sm ring-1 ring-gray-200"
+            aria-label={sound ? "Matikan suara struk" : "Nyalakan suara struk"}
+            aria-pressed={sound}
+          >
+            {sound ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
+          </button>
           <h1 className="text-lg font-black">Pembayaran berhasil</h1>
           <p className="mt-0.5 text-xs text-gray-500">
             {sale.itemCount} item · {sale.methodLabel}
@@ -68,6 +86,7 @@ export function KasirSuccess({
             cashierName={cashierName}
             paidAt={sale.paidAt}
             amountLabel={formatRupiah(sale.total)}
+            sound={sound}
           />
         </div>
 

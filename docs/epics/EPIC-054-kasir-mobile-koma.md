@@ -92,3 +92,11 @@ penggunanya **kasir** dan transaksinya langsung lunas lewat checkout kasir.
   Uji (order di-mock): payload payment_method=credit, code=static_qris,
   name=QRIS, amount_paid = total; struk "Dibayar QRIS". Akuntansi memetakan
   static_qris ke akun QRIS (accounting-amounts.ts).
+- 2026-10-19 — Efek suara struk (`receipt-sound.ts`, Web Audio, tanpa file
+  audio): printer thermal (motor stepper + desis kepala cetak) per hentakan
+  kertas 0,7–2,45 s, pisau "cekrek" + kertas sobek kresek di 2,45 s. Audio
+  dibuka di klik konfirmasi bayar / Cetak struk; tombol mute di layar sukses
+  (localStorage `kokmaju-kasir-sound`); ketuk-lewati = langsung bunyi potong.
+  Jadwal dites selaras dengan CSS (`receipt-sound.test.ts`). Diverifikasi
+  render OfflineAudioContext di halaman: hening <0,7 s, dengung 0,7–2,4 s,
+  puncak potong 2,4–2,7 s, peak 0,79.

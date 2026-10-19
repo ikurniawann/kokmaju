@@ -32,6 +32,7 @@ import { DEFAULT_POS_PAYMENT_METHODS, isFocPaymentMethod } from "@/lib/pos/payme
 import { formatPaymentMethodLabel } from "@/features/pos/reports/utils/transaction-labels";
 import { printThermalReceipt, type ReceiptPayload } from "@/components/pos/PrintReceipt";
 import { receiptFromPayload } from "@/lib/pos/receipt-animation";
+import { unlockReceiptAudio } from "../receipt-sound";
 import {
   buildCategories,
   filterProducts,
@@ -237,6 +238,8 @@ export function MobileKasirApp({ cashierName, brandName }: { cashierName: string
     shiftEnabled && !shiftLoading && !hasShift ? "Buka shift dulu sebelum menerima pembayaran." : null;
 
   async function submitPayment({ option, cashReceived }: KasirPaymentSubmit) {
+    // Masih di dalam klik "konfirmasi" → izinkan audio utk suara struk nanti.
+    unlockReceiptAudio();
     const items = toPosCart(cart, products);
     if (items.length === 0) return;
     setPayError(null);
@@ -304,7 +307,8 @@ export function MobileKasirApp({ cashierName, brandName }: { cashierName: string
 
   async function printReceipt() {
     if (!receipt) return;
-    // Putar ulang animasi "Bayar → Struk" sambil struk dikirim ke printer.
+    // Putar ulang animasi (+ suara) sambil struk dikirim ke printer.
+    unlockReceiptAudio();
     setReplayKey((key) => key + 1);
     setPrinting(true);
     try {
