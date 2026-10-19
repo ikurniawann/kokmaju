@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Printer, Plus } from "lucide-react";
 import type { AnimatedReceipt } from "@/lib/pos/receipt-animation";
 import { formatRupiah } from "@/lib/table-order/menu";
@@ -18,7 +19,7 @@ export type KasirSale = {
 };
 
 /**
- * Layar setelah bayar: animasi "Bayar → Struk" (diputar ulang tiap Cetak
+ * Layar setelah bayar: animasi struk keluar dari printer (diputar ulang tiap Cetak
  * struk lewat `replayKey`), kembalian, cetak struk, transaksi baru.
  */
 export function KasirSuccess({
@@ -40,6 +41,13 @@ export function KasirSuccess({
   onPrint: () => void;
   onNewSale: () => void;
 }) {
+  // Sheet bayar yang baru tertutup memulihkan posisi gulir lama (menu);
+  // layar struk harus mulai dari atas supaya printer & kertas terlihat utuh.
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => window.scrollTo(0, 0));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
   return (
     <main className="flex min-h-dvh flex-col bg-gray-100 text-gray-900">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-6">
@@ -51,7 +59,7 @@ export function KasirSuccess({
           </p>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-8">
           <PayReceiptAnimation
             key={replayKey}
             receipt={sale.receipt}
@@ -59,7 +67,7 @@ export function KasirSuccess({
             subLine={stallName}
             cashierName={cashierName}
             paidAt={sale.paidAt}
-            payLabel={`Bayar ${formatRupiah(sale.total)}`}
+            amountLabel={formatRupiah(sale.total)}
           />
         </div>
 

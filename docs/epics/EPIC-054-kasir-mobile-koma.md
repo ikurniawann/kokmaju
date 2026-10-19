@@ -74,3 +74,8 @@ penggunanya **kasir** dan transaksinya langsung lunas lewat checkout kasir.
   naik dari balik tombol, baris muncul berurutan, barcode hiasan deterministik.
   Ketuk = lewati; prefers-reduced-motion dihormati. Diverifikasi frame
   250–3200 ms di 390×844 dengan request order di-mock (tanpa tulis DB).
+- 2026-10-19 — Revisi owner: struk keluar dari PRINTER + langkah POTONG kertas.
+  Printer thermal KoMa (layar "Rp …" → "✓ LUNAS", LED berkedip, getar),
+  kertas keluar dari celah tersendat (header duluan), pisau cutter menyapu
+  celah + kilatan, tepi bawah jadi bergerigi, struk lepas (naik & miring).
+  Layar sukses mulai dari atas (sheet bayar memulihkan gulir lama).
