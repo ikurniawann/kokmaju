@@ -28,6 +28,8 @@ const BRANCH_CODE = process.env.SEED_BRANCH_CODE || "KOMA-PUSAT";
 // phone wajib di hris.employees — nomor placeholder, ganti di HRIS.
 const ACCOUNTS = [
   { email: "kasir1@kokmaju.id", fullName: "Kasir Gerobak 1", stallCode: "GEROBAK-01", nip: "KOMA-K01", phone: "081200000001" },
+  // Akun kasir utama permintaan owner (2026-10-19).
+  { email: "kasir@kokmaju.id", fullName: "Kasir KoMa", stallCode: "GEROBAK-01", nip: "KOMA-K00", phone: "081200000000" },
 ];
 
 function loadEnv() {

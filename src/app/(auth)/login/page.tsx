@@ -56,7 +56,9 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search);
     const redirect = params.get("redirect");
     setRequestedRedirect(
-      redirect?.startsWith("/dashboard") || redirect?.startsWith("/pos/kasir") ? redirect : null
+      redirect?.startsWith("/dashboard") || redirect === "/kasir" || redirect?.startsWith("/pos/kasir")
+        ? redirect
+        : null
     );
     setRequestedModule(params.get("module"));
 
@@ -125,10 +127,11 @@ export default function LoginPage() {
         target =
           requestedRedirect?.startsWith("/dashboard/me") ||
           requestedRedirect?.startsWith("/dashboard/pos/self-orders") ||
+          requestedRedirect === "/kasir" ||
           requestedRedirect?.startsWith("/pos/kasir")
             ? requestedRedirect
             : role === "pos"
-              ? "/pos/kasir" // Kasir KoMa bekerja dari HP → langsung ke kasir mobile.
+              ? "/kasir" // Kasir KoMa bekerja dari HP → langsung ke kasir mobile.
               : "/dashboard/me";
       }
       setTransitioning(true);

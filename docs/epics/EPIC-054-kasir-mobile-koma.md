@@ -17,12 +17,13 @@ penggunanya **kasir** dan transaksinya langsung lunas lewat checkout kasir.
 ## Keputusan (owner 2026-10-19)
 
 - Referensi UI: self-order `poskopi.reddie.id/table-order/WIT-OFFICE-BDG`, branding KoMa.
-- Rute layar penuh `/pos/kasir` (+ alias `/kasir`), di luar layout dashboard
+- Rute layar penuh `/kasir` (alamat lama `/pos/kasir` dialihkan), di luar layout dashboard
   (tanpa sidebar), gerbang akses = gerbang layout POS (menu IAM `pos*`).
 - Metode bayar di HP: Tunai (keypad + nominal cepat + kembalian), QRIS Statis
   (tampilkan QR, kasir konfirmasi), non-tunai manual (EDC/transfer). QRIS
   dinamis, ARK Coin, NFC, gift card, FOC tetap di kasir desktop.
-- Role `pos` (POS Cashier) login → langsung ke `/pos/kasir`.
+- Role `pos` (POS Cashier) login → langsung ke `/kasir`. Akun utama
+  `kasir@kokmaju.id` (stall Gerobak 1).
 
 ## Desain
 
@@ -79,3 +80,7 @@ penggunanya **kasir** dan transaksinya langsung lunas lewat checkout kasir.
   kertas keluar dari celah tersendat (header duluan), pisau cutter menyapu
   celah + kilatan, tepi bawah jadi bergerigi, struk lepas (naik & miring).
   Layar sukses mulai dari atas (sheet bayar memulihkan gulir lama).
+- 2026-10-19 — Akun kasir@kokmaju.id dibuat (seeder kokmaju-kasir-users.js,
+  password dari owner). Alamat utama dipindah ke `/kasir` sesuai permintaan;
+  `/pos/kasir` redirect. Uji: login lewat halaman /login di viewport HP →
+  mendarat di /kasir; /kasir tanpa sesi → /login?redirect=/kasir.

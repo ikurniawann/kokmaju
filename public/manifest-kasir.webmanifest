@@ -2,7 +2,7 @@
   "name": "Kasir KoMa",
   "short_name": "Kasir KoMa",
   "description": "Kasir mobile Gerobak KoMa — jual, terima tunai/QRIS, cetak struk dari HP",
-  "start_url": "/pos/kasir",
+  "start_url": "/kasir",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

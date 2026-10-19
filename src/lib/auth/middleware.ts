@@ -154,7 +154,7 @@ export async function updateSession(request: NextRequest) {
     }
     // Kasir mobile (bookmark /kasir di HP kasir) → kembali ke kasir setelah login.
     if ((pathname === "/kasir" || pathname.startsWith("/pos/kasir")) && !url.searchParams.has("redirect")) {
-      url.searchParams.set("redirect", "/pos/kasir");
+      url.searchParams.set("redirect", "/kasir");
     }
     return NextResponse.redirect(url);
   }
