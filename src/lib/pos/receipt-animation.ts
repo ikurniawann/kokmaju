@@ -71,7 +71,7 @@ export function receiptFromPayload(
     ? payload.chargesBreakdown.reduce((sum, line) => sum + (Number(line.amount) || 0), 0)
     : Number(payload.taxAmount) || 0;
   return {
-    outlet: payload.receiptHeader?.find((line) => line.trim())?.trim() || "BCD Coffee",
+    outlet: payload.receiptHeader?.find((line) => line.trim())?.trim() || "KoMa",
     queue: payload.queueNumber ?? null,
     orderNumber: payload.checkoutNumber || payload.orderNumber || null,
     items,
@@ -111,7 +111,7 @@ export function receiptFromCfd(state: {
     amount: item.unit_price * item.qty,
   }));
   return {
-    outlet: receipt.outlet || "BCD Coffee",
+    outlet: receipt.outlet || "KoMa",
     queue: receipt.queue ?? null,
     orderNumber: receipt.order_number ?? null,
     items: mapped.slice(0, MAX_ANIMATED_ITEMS),

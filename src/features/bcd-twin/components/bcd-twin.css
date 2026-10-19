@@ -1,4 +1,4 @@
-/* BCD Twin — panel kaca hangat di atas peta 3D (referensi: WIT ERP Twin). */
+/* KoMa Twin — panel kaca hangat di atas peta 3D (referensi: WIT ERP Twin). */
 .bcd-twin {
   --tw-panel: rgba(255, 251, 246, 0.94);
   --tw-solid: #fffaf4;
@@ -7,7 +7,7 @@
   --tw-faint: #a8978a;
   --tw-line: #eadccd;
   --tw-hover: #f6ece1;
-  --tw-accent: #2b2fae;
+  --tw-accent: #fd4835;
   --tw-accent-ink: #ffffff;
   --tw-accent-soft: #e5e6fb;
   --tw-coffee: #6b4430;

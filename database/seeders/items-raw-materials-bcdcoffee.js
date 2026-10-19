@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seeder: bahan baku BCD Coffee (coffee shop + light kitchen).
+ * Seeder: bahan baku KoMa (coffee shop + light kitchen).
  *
  * Berbeda dari `items-raw-materials.js` yang berisi daftar restoran umum
  * (sayur, daging, seafood). Berkas ini fokus ke bahan yang benar-benar dipakai
@@ -257,7 +257,7 @@ async function main() {
       );
     }
 
-    console.log(`Seeding bahan baku BCD Coffee (${scope.branch_name})...`);
+    console.log(`Seeding bahan baku KoMa (${scope.branch_name})...`);
     for (const [
       kode, nama, kategori, besar, kecil, konv, min, max, shelf, storage, deskripsi, harga,
     ] of MATERIALS) {

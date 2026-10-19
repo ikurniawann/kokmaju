@@ -1,5 +1,5 @@
 /**
- * Snapshot live BCD Twin dari database. Memakai ulang ringkasan Desktop
+ * Snapshot live KoMa Twin dari database. Memakai ulang ringkasan Desktop
  * (omzet, tim, keputusan, stok menipis, CRM) lalu menambah data khusus peta:
  * order terbaru per kanal, antrean bar/dapur, meja, GoFood, procurement,
  * tagihan member. Tiap bagian gagal-sendiri: dicatat di `failed`, sisanya jalan.
@@ -185,8 +185,8 @@ export async function buildTwinSnapshot(): Promise<TwinSnapshot> {
       attempt("tagihan", failed, () => listMemberBills(""), []),
       attempt("outlet", failed, async () => {
         const row = await queryOne<{ name: string }>(`SELECT name FROM configuration.companies ORDER BY created_at LIMIT 1`);
-        return row?.name || "BCD Coffee";
-      }, "BCD Coffee"),
+        return row?.name || "KoMa";
+      }, "KoMa"),
     ]);
 
   const pulse = overview?.pulsaBisnis;

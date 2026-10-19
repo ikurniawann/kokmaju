@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seeder demo Resep / BOM BCD Coffee — penghubung produk jadi ke bahan baku.
+ * Seeder demo Resep / BOM KoMa — penghubung produk jadi ke bahan baku.
  *
  * Bukan sekadar pelengkap. Halaman stok bahan baku memakai view
  * v_raw_materials_stock_by_warehouse saat pengguna sedang berada di satu stall,

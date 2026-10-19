@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seeder demo HRIS BCD Coffee: karyawan operasional, shift kerja, kontrak.
+ * Seeder demo HRIS KoMa: karyawan operasional, shift kerja, kontrak.
  *
  * Melengkapi hris-master-data.js (departemen/jabatan/status kepegawaian) yang
  * hanya mengisi master. Tanpa karyawan ber-departemen, modul lain ikut macet —
@@ -20,16 +20,16 @@ const { dayFrom, runSeeder } = require("./lib/bcdcoffee-demo");
 
 /** [nama, nip, email, telepon, departemen_code, jabatan, status, gender, kota, mulai_kerja_hari] */
 const EMPLOYEES = [
-  ["Rizky Ananda", "BCD-1001", "rizky.ananda@bcdcoffee.id", "081210001001", "OPS", "Store Manager", "permanent", "male", "Bandung", -720],
-  ["Putri Maharani", "BCD-1002", "putri.maharani@bcdcoffee.id", "081210001002", "OPS", "Supervisor", "permanent", "female", "Bandung", -540],
-  ["Bagas Pratama", "BCD-1003", "bagas.pratama@bcdcoffee.id", "081210001003", "OPS", "Barista", "permanent", "male", "Bandung", -400],
-  ["Nadia Safitri", "BCD-1004", "nadia.safitri@bcdcoffee.id", "081210001004", "OPS", "Barista", "contract", "female", "Cimahi", -240],
-  ["Fajar Nugroho", "BCD-1005", "fajar.nugroho@bcdcoffee.id", "081210001005", "OPS", "Barista", "probation", "male", "Bandung", -60],
-  ["Salsa Ramadhani", "BCD-1006", "salsa.ramadhani@bcdcoffee.id", "081210001006", "OPS", "Cashier", "contract", "female", "Bandung", -300],
-  ["Dimas Kurniawan", "BCD-1007", "dimas.kurniawan@bcdcoffee.id", "081210001007", "OPS", "Cook", "permanent", "male", "Bandung Barat", -480],
-  ["Ayu Lestari", "BCD-1008", "ayu.lestari@bcdcoffee.id", "081210001008", "PROC", "Admin Staff", "permanent", "female", "Bandung", -365],
-  ["Hendra Saputra", "BCD-1009", "hendra.saputra@bcdcoffee.id", "081210001009", "FIN", "Accounting Supervisor", "permanent", "male", "Bandung", -600],
-  ["Tiara Wulandari", "BCD-1010", "tiara.wulandari@bcdcoffee.id", "081210001010", "MKT", "Digital Marketing Specialist", "contract", "female", "Bandung", -180],
+  ["Rizky Ananda", "BCD-1001", "rizky.ananda@kokmaju.id", "081210001001", "OPS", "Store Manager", "permanent", "male", "Bandung", -720],
+  ["Putri Maharani", "BCD-1002", "putri.maharani@kokmaju.id", "081210001002", "OPS", "Supervisor", "permanent", "female", "Bandung", -540],
+  ["Bagas Pratama", "BCD-1003", "bagas.pratama@kokmaju.id", "081210001003", "OPS", "Barista", "permanent", "male", "Bandung", -400],
+  ["Nadia Safitri", "BCD-1004", "nadia.safitri@kokmaju.id", "081210001004", "OPS", "Barista", "contract", "female", "Cimahi", -240],
+  ["Fajar Nugroho", "BCD-1005", "fajar.nugroho@kokmaju.id", "081210001005", "OPS", "Barista", "probation", "male", "Bandung", -60],
+  ["Salsa Ramadhani", "BCD-1006", "salsa.ramadhani@kokmaju.id", "081210001006", "OPS", "Cashier", "contract", "female", "Bandung", -300],
+  ["Dimas Kurniawan", "BCD-1007", "dimas.kurniawan@kokmaju.id", "081210001007", "OPS", "Cook", "permanent", "male", "Bandung Barat", -480],
+  ["Ayu Lestari", "BCD-1008", "ayu.lestari@kokmaju.id", "081210001008", "PROC", "Admin Staff", "permanent", "female", "Bandung", -365],
+  ["Hendra Saputra", "BCD-1009", "hendra.saputra@kokmaju.id", "081210001009", "FIN", "Accounting Supervisor", "permanent", "male", "Bandung", -600],
+  ["Tiara Wulandari", "BCD-1010", "tiara.wulandari@kokmaju.id", "081210001010", "MKT", "Digital Marketing Specialist", "contract", "female", "Bandung", -180],
 ];
 
 /** [nama, mulai, selesai, istirahat_menit, toleransi_menit, lintas_hari, urutan] */

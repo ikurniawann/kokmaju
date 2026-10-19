@@ -83,7 +83,7 @@ function AppSidebarContent({
   essOnly: essOnlyProp,
 }: AppSidebarProps & { posImmersive: boolean }) {
   const pathname = usePathname();
-  // ESS-only: sembunyikan seluruh jalan menuju desktop BCD Coffee OS.
+  // ESS-only: sembunyikan seluruh jalan menuju desktop KoMa OS.
   // Nilai dari server (IAM) diutamakan; fallback kebijakan role di kode.
   const essOnly = essOnlyProp ?? isEssOnlyRole(user.role);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -264,8 +264,8 @@ function SidebarHeader({
       {collapsed ? (
         <div className="flex w-full flex-col items-center justify-center gap-1">
           <img
-            src="/logos/logo.png?v=bcd"
-            alt="BCD Coffee OS"
+            src="/logos/logo.png?v=koma"
+            alt="KoMa OS"
             className="h-9 w-9 object-contain"
           />
           <button
@@ -281,8 +281,8 @@ function SidebarHeader({
       ) : (
         <div className="flex w-full items-center gap-3">
           <img
-            src="/logos/logo.png?v=bcd"
-            alt="BCD Coffee OS"
+            src="/logos/logo.png?v=koma"
+            alt="KoMa OS"
             className="h-16 w-auto max-w-[10rem] shrink-0 object-contain object-left"
           />
           <div className="min-w-0 flex-1 leading-tight">
@@ -606,7 +606,7 @@ function AccountPopup({
           <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
             <div>
               <h2 className="text-base font-semibold text-gray-900">Account</h2>
-              <p className="text-xs text-gray-500">Active BCD Coffee OS session</p>
+              <p className="text-xs text-gray-500">Active KoMa OS session</p>
             </div>
             <button
               onClick={onClose}

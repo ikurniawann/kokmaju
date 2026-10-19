@@ -55,7 +55,7 @@ describe("POST /api/integrations/telegram/webhook/[secret]", () => {
 
   it("/start@bot di grup juga dikenali; chat yang sudah aktif dibalas 'sudah menerima'", async () => {
     registerTelegramChat.mockResolvedValue("active");
-    await post({ message: { text: "/start@bcdcoffee_bot", chat: { id: -100, type: "group", title: "Barista BCD" } } });
+    await post({ message: { text: "/start@kokmaju_bot", chat: { id: -100, type: "group", title: "Barista BCD" } } });
     expect(registerTelegramChat).toHaveBeenCalledWith({ id: -100, type: "group", title: "Barista BCD", username: null });
     expect(String(sendTelegramMessage.mock.calls[0][2])).toMatch(/sudah menerima/);
   });

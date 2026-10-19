@@ -61,7 +61,7 @@ const rpShort = (n: number) =>
 async function fetchLiveSnapshot(): Promise<TwinSnapshot> {
   const response = await fetch("/api/dashboard/bcd-twin", { cache: "no-store" });
   const body = (await response.json().catch(() => ({}))) as { success?: boolean; data?: TwinSnapshot; error?: string };
-  if (!response.ok || !body.data) throw new Error(body.error || "Gagal memuat data BCD Twin");
+  if (!response.ok || !body.data) throw new Error(body.error || "Gagal memuat data KoMa Twin");
   return body.data;
 }
 
@@ -219,7 +219,7 @@ export function BcdTwinPage() {
 
   return (
     <div ref={rootRef} className="bcd-twin h-[calc(100dvh-7.5rem)] min-h-[560px]">
-      <div ref={stageRef} className="tw-stage" aria-label="Peta 3D BCD Coffee" />
+      <div ref={stageRef} className="tw-stage" aria-label="Peta 3D KoMa" />
       <div ref={labelsRef} className="tw-labels" />
       {!sceneReady && !sceneError ? (
         <div className="tw-loading">
@@ -232,8 +232,8 @@ export function BcdTwinPage() {
         <div className="tw-card tw-brand">
           <div className="tw-logo"><Coffee className="h-[18px] w-[18px]" /></div>
           <div>
-            <b>BCD Twin</b>
-            <small>{snapshot?.outlet ?? "BCD Coffee"} · coffee shop live</small>
+            <b>KoMa Twin</b>
+            <small>{snapshot?.outlet ?? "KoMa"} · coffee shop live</small>
           </div>
         </div>
         <div className="tw-card tw-seg" role="group" aria-label="Sumber data">

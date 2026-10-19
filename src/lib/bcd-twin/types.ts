@@ -1,5 +1,5 @@
 /**
- * BCD Twin (owner 2026-10-11) — satu "snapshot" keadaan coffee shop yang
+ * KoMa Twin (owner 2026-10-11) — satu "snapshot" keadaan coffee shop yang
  * dirender jadi peta 3D. Mode live mengisinya dari database; mode demo dari
  * simulator — keduanya berbentuk sama supaya satu jalur render.
  */

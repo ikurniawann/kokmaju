@@ -24,7 +24,7 @@
  *
  * Usage:
  *   node database/seeders/bcdcoffee-superadmin-all-stalls.js
- *   node database/seeders/bcdcoffee-superadmin-all-stalls.js --email=admin@bcdcoffee.id
+ *   node database/seeders/bcdcoffee-superadmin-all-stalls.js --email=admin@kokmaju.id
  *   npm run db:seed:bcdcoffee-superadmin-stalls
  */
 

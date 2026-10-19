@@ -111,7 +111,7 @@ export default function LoginPage() {
         .eq("id", authData.user.id)
         .single();
 
-      // Hanya super_admin yang mendarat di desktop BCD Coffee OS. Semua role lain
+      // Hanya super_admin yang mendarat di desktop KoMa OS. Semua role lain
       // langsung ke Area Karyawan (/dashboard/me = beranda); redirect yang
       // diminta dihormati hanya bila masih di dalam area /dashboard/me.
       const role = (profile as { role?: string } | null)?.role;
@@ -160,7 +160,7 @@ export default function LoginPage() {
           <div className="mb-5 grid size-24 place-items-center rounded-full border border-white/20 bg-white/15 text-3xl font-semibold shadow-2xl backdrop-blur-2xl">
             {email ? email.charAt(0).toUpperCase() : "A"}
           </div>
-          <h1 className="text-center text-2xl font-semibold tracking-[-0.03em] drop-shadow-lg">BCD Coffee</h1>
+          <h1 className="text-center text-2xl font-semibold tracking-[-0.03em] drop-shadow-lg">KoMa</h1>
           <p className="mt-1 text-center text-sm text-white/70">
             {requestedModule ? `Verifikasi akun untuk membuka ${requestedModule.toUpperCase()}` : "Verifikasi akun untuk masuk ke desktop"}
           </p>
@@ -218,7 +218,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex w-full items-center justify-between text-xs text-white/55">
-          <span>BCD Coffee Operating System</span>
+          <span>KoMa Operating System</span>
           <span>Single account session</span>
         </div>
       </section>

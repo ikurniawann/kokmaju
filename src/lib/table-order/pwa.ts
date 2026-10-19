@@ -4,11 +4,11 @@
  * /table-order/<meja> & /member yang dibuka dari aplikasi tetap di dalamnya.
  */
 export const CUSTOMER_APP_START = "/pesan";
-export const CUSTOMER_APP_THEME = "#1d1dcc";
+export const CUSTOMER_APP_THEME = "#d8301d";
 export const CUSTOMER_SW_URL = "/sw-pelanggan.js";
 
 export function customerAppManifest(brand: string) {
-  const name = brand.trim() || "BCD Coffee";
+  const name = brand.trim() || "KoMa";
   return {
     id: CUSTOMER_APP_START,
     name,

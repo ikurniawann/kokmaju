@@ -1,6 +1,6 @@
 /* OTP 6 kotak beranimasi (owner 2026-10-11, ref. reel "OTP Verification v5"). */
 .otp {
-  --otp-accent: var(--primary, #2b2fae);
+  --otp-accent: var(--primary, #fd4835);
   --otp-ok: #16a34a;
   --otp-bad: #dc2626;
   position: relative;

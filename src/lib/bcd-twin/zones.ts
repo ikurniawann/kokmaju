@@ -1,5 +1,5 @@
 /**
- * Area (divisi) di peta BCD Twin + aturan status & KPI tiap area dari
+ * Area (divisi) di peta KoMa Twin + aturan status & KPI tiap area dari
  * snapshot. Murni — dipakai scene 3D (warna lampu/pin) dan panel detail.
  */
 

@@ -1,5 +1,5 @@
 /**
- * Scene 3D BCD Twin — coffee shop isometrik low-poly (three.js). Imperatif &
+ * Scene 3D KoMa Twin — coffee shop isometrik low-poly (three.js). Imperatif &
  * mandiri dari React: halaman memberi snapshot + peristiwa, scene mengurus
  * render, animasi orang/kendaraan, pin label (DOM) dan pemilihan area.
  *
@@ -22,7 +22,7 @@ type Palette = {
 
 const LIGHT: Palette = {
   sky: 0xf3ece3, ground: 0xe9dfd2, street: 0xc9beb1, sidewalk: 0xe0d4c4, floor: 0xd8b88f, wall: 0xf7f0e6,
-  trim: 0x5b3a29, wood: 0xa8774f, woodDark: 0x6b4430, top: 0xf1e6d6, steel: 0xb8c0c4, accent: 0x2b2fae,
+  trim: 0x5b3a29, wood: 0xa8774f, woodDark: 0x6b4430, top: 0xf1e6d6, steel: 0xb8c0c4, accent: 0xfd4835,
   leaf: 0x6f9a62, glass: 0xbcd7e4,
 };
 const DARK: Palette = {
@@ -130,14 +130,14 @@ export class CafeScene {
     // Sorotan area terpilih: lantai berwarna aksen tipis + garis tepi.
     this.selectFill = new THREE.Mesh(
       new THREE.PlaneGeometry(1, 1),
-      new THREE.MeshBasicMaterial({ color: 0x2b2fae, transparent: true, opacity: 0.16, depthWrite: false })
+      new THREE.MeshBasicMaterial({ color: 0xfd4835, transparent: true, opacity: 0.16, depthWrite: false })
     );
     this.selectFill.rotation.x = -Math.PI / 2;
     this.selectFill.visible = false;
     this.scene.add(this.selectFill);
     this.selectEdge = new THREE.LineSegments(
       new THREE.EdgesGeometry(new THREE.PlaneGeometry(1, 1)),
-      new THREE.LineBasicMaterial({ color: 0x2b2fae })
+      new THREE.LineBasicMaterial({ color: 0xfd4835 })
     );
     this.selectEdge.rotation.x = -Math.PI / 2;
     this.selectEdge.visible = false;
@@ -260,7 +260,7 @@ export class CafeScene {
     this.box(20, 0.35, 2.2, this.mat("trim"), 9, 3.2, 11);
     const sign = new THREE.Mesh(
       new THREE.PlaneGeometry(8, 2),
-      new THREE.MeshBasicMaterial({ map: this.signTexture("BCD COFFEE", "#2b2fae", "#ffffff") })
+      new THREE.MeshBasicMaterial({ map: this.signTexture("GEROBAK KOMA", "#fd4835", "#ffffff") })
     );
     sign.position.set(9, 4.6, 11.2);
     this.scene.add(sign);
@@ -359,7 +359,7 @@ export class CafeScene {
     this.box(9.2, 0.14, 1.6, this.mat("top"), 9, 1.4, -1.5, g);
     // Terminal POS + layar pelanggan
     this.box(0.9, 0.6, 0.15, this.color(0x1f2428), 7.5, 1.6, -1.6, g).rotation.x = -0.3;
-    this.box(0.7, 0.45, 0.12, this.color(0x2b2fae), 9.5, 1.6, -1.1, g);
+    this.box(0.7, 0.45, 0.12, this.color(0xfd4835), 9.5, 1.6, -1.1, g);
     // Etalase pastry
     const display = new THREE.MeshLambertMaterial({ color: this.palette.glass, transparent: true, opacity: 0.45 });
     this.box(2.4, 0.7, 1.2, display, 12, 1.55, -1.5, g, false);
@@ -499,14 +499,14 @@ export class CafeScene {
 
   private buildStaff() {
     // Barista & kasir (diam, sedikit bergerak di loop)
-    const shirts = [0x2b2fae, 0x2b2fae, 0x3b2a20];
+    const shirts = [0xfd4835, 0xfd4835, 0x3b2a20];
     [[-3, -13.2], [2, -13.2], [5.5, -10]].forEach(([x, z], i) => {
       const b = this.person(shirts[i]);
       b.position.set(x, 0.2, z);
       b.userData.bob = i;
       this.tagZone(b, "bar");
     });
-    const cashier = this.person(0x2b2fae);
+    const cashier = this.person(0xfd4835);
     cashier.position.set(8, 0.2, -2.8);
     cashier.userData.bob = 4;
     this.tagZone(cashier, "kasir");
@@ -634,7 +634,7 @@ export class CafeScene {
   }
 
   private spawnRunner() {
-    const runner = this.person(0x2b2fae);
+    const runner = this.person(0xfd4835);
     runner.position.set(2, 0.2, -6);
     const mover: Mover = { group: runner, path: [], speed: 6, wait: 0 };
     const seat = this.seatSpots[Math.floor(Math.random() * this.seatSpots.length)].clone().add(new THREE.Vector3(0, 0, 0.9));

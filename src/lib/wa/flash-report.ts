@@ -205,7 +205,7 @@ export function buildFlashReportMessage(data: FlashReportData, dateWib: string):
 
   const lines: string[] = [
     `📊 *Daily Flash Report*`,
-    `BCD COFFEE`,
+    `GEROBAK KOMA`,
     tanggal,
   ];
   if (data.operationHour) lines.push(`Jam operasional: ${data.operationHour}`);

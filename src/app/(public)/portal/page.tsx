@@ -33,7 +33,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 type PortalSource = FormValues["source"];
 
-const logoUrl = "/logos/bcd-coffee-logo.png?v=bcd";
+const logoUrl = "/logos/kokmaju-logo.png?v=koma";
 
 export default function PortalPage() {
   const router = useRouter();
@@ -227,12 +227,12 @@ export default function PortalPage() {
     <div id="top" className="min-h-screen bg-[#f8f9fa] text-[#191c1d] career-roundo">
       <nav className="fixed top-0 z-50 w-full border-b border-[#bdc8e4] bg-[#f8f9fa]/95 backdrop-blur">
         <div className="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-10">
-          <Link href="/career" className="flex h-full items-center" aria-label="BCD Coffee careers">
-            <img src={logoUrl} alt="BCD Coffee Logo" className="h-full w-auto object-contain" />
+          <Link href="/career" className="flex h-full items-center" aria-label="KoMa careers">
+            <img src={logoUrl} alt="KoMa Logo" className="h-full w-auto object-contain" />
           </Link>
           <Link
             href="/career"
-            className="rounded-full bg-[#1d1dcc] px-6 py-2 text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-[#3d5edc] active:scale-95"
+            className="rounded-full bg-[#d8301d] px-6 py-2 text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-[#fd4835] active:scale-95"
           >
             Back to Careers
           </Link>
@@ -241,7 +241,7 @@ export default function PortalPage() {
 
       <main className="overflow-x-hidden pb-20 pt-36 sm:pt-40">
         <section className="mx-auto mb-10 max-w-[700px] px-4 text-center sm:px-6 lg:px-10">
-          <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#edeeef] text-[#1d1dcc]">
+          <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#edeeef] text-[#d8301d]">
             <Briefcase className="h-5 w-5" />
           </div>
           <h1 className="mb-3 text-2xl font-semibold leading-tight sm:text-3xl">
@@ -268,7 +268,7 @@ export default function PortalPage() {
                     value={watch("brand_id") || ""}
                     onChange={(e) => setValue("brand_id", e.target.value || undefined)}
                     disabled={isBrandReadOnly}
-                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="">{isBrandReadOnly ? "Auto-selected" : "Pilih Outlet (opsional)"}</option>
                     {brands.map((b) => (
@@ -288,7 +288,7 @@ export default function PortalPage() {
                     id="position_id"
                     value={watch("position_id") || ""}
                     onChange={(e) => setValue("position_id", e.target.value || undefined)}
-                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="">
                       {positionsLoading ? "Loading positions..." : (positions.length > 0 ? "Pilih Posisi" : "No positions available")}
@@ -303,30 +303,30 @@ export default function PortalPage() {
                     <p className="text-xs text-[#40485c]">Loading positions from database...</p>
                   )}
                   {!positionsLoading && positions.length === 0 && (
-                    <p className="text-xs text-[#1d1dcc]">No active positions found in database</p>
+                    <p className="text-xs text-[#d8301d]">No active positions found in database</p>
                   )}
                 </div>
 
                 {/* Full Name */}
                 <div className="space-y-1.5">
                   <label htmlFor="full_name" className="text-xs font-bold uppercase tracking-[0.12em] text-[#40485c]">
-                    Nama Lengkap <span className="text-[#1d1dcc]">*</span>
+                    Nama Lengkap <span className="text-[#d8301d]">*</span>
                   </label>
                   <input
                     id="full_name"
                     placeholder="Nama lengkap"
                     {...register("full_name")}
-                    className={`flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50 ${errors.full_name ? "border-[#1d1dcc]" : "border-[#bdc8e4]"}`}
+                    className={`flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50 ${errors.full_name ? "border-[#d8301d]" : "border-[#bdc8e4]"}`}
                   />
                   {errors.full_name && (
-                    <p className="text-xs text-[#1d1dcc]">{errors.full_name.message}</p>
+                    <p className="text-xs text-[#d8301d]">{errors.full_name.message}</p>
                   )}
                 </div>
 
                 {/* Email */}
                 <div className="space-y-1.5">
                   <label htmlFor="email" className="text-xs font-bold uppercase tracking-[0.12em] text-[#40485c]">
-                    Email <span className="text-[#1d1dcc]">*</span>
+                    Email <span className="text-[#d8301d]">*</span>
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#40485c]" />
@@ -335,18 +335,18 @@ export default function PortalPage() {
                       type="email"
                       placeholder="email@contoh.com"
                       {...register("email")}
-                      className={`flex h-10 w-full rounded-md border bg-transparent pl-9 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50 ${errors.email ? "border-[#1d1dcc]" : "border-[#bdc8e4]"}`}
+                      className={`flex h-10 w-full rounded-md border bg-transparent pl-9 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50 ${errors.email ? "border-[#d8301d]" : "border-[#bdc8e4]"}`}
                     />
                   </div>
                   {errors.email && (
-                    <p className="text-xs text-[#1d1dcc]">{errors.email.message}</p>
+                    <p className="text-xs text-[#d8301d]">{errors.email.message}</p>
                   )}
                 </div>
 
                 {/* Phone */}
                 <div className="space-y-1.5">
                   <label htmlFor="phone" className="text-xs font-bold uppercase tracking-[0.12em] text-[#40485c]">
-                    No. WhatsApp <span className="text-[#1d1dcc]">*</span>
+                    No. WhatsApp <span className="text-[#d8301d]">*</span>
                   </label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#40485c]" />
@@ -355,18 +355,18 @@ export default function PortalPage() {
                       type="tel"
                       placeholder="081234567890"
                       {...register("phone")}
-                      className={`flex h-10 w-full rounded-md border bg-transparent pl-9 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50 ${errors.phone ? "border-[#1d1dcc]" : "border-[#bdc8e4]"}`}
+                      className={`flex h-10 w-full rounded-md border bg-transparent pl-9 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50 ${errors.phone ? "border-[#d8301d]" : "border-[#bdc8e4]"}`}
                     />
                   </div>
                   {errors.phone && (
-                    <p className="text-xs text-[#1d1dcc]">{errors.phone.message}</p>
+                    <p className="text-xs text-[#d8301d]">{errors.phone.message}</p>
                   )}
                 </div>
 
                 {/* Domicile */}
                 <div className="space-y-1.5">
                   <label htmlFor="domicile" className="text-xs font-bold uppercase tracking-[0.12em] text-[#40485c]">
-                    Domisili <span className="text-[#1d1dcc]">*</span>
+                    Domisili <span className="text-[#d8301d]">*</span>
                   </label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#40485c]" />
@@ -374,24 +374,24 @@ export default function PortalPage() {
                       id="domicile"
                       placeholder="Jakarta Selatan"
                       {...register("domicile")}
-                      className={`flex h-10 w-full rounded-md border bg-transparent pl-9 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50 ${errors.domicile ? "border-[#1d1dcc]" : "border-[#bdc8e4]"}`}
+                      className={`flex h-10 w-full rounded-md border bg-transparent pl-9 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50 ${errors.domicile ? "border-[#d8301d]" : "border-[#bdc8e4]"}`}
                     />
                   </div>
                   {errors.domicile && (
-                    <p className="text-xs text-[#1d1dcc]">{errors.domicile.message}</p>
+                    <p className="text-xs text-[#d8301d]">{errors.domicile.message}</p>
                   )}
                 </div>
 
                 {/* Source */}
                 <div className="space-y-1.5">
                   <label htmlFor="source" className="text-xs font-bold uppercase tracking-[0.12em] text-[#40485c]">
-                    Sumber Info <span className="text-[#1d1dcc]">*</span>
+                    Sumber Info <span className="text-[#d8301d]">*</span>
                   </label>
                   <select
                     id="source"
                     value={watch("source") || "portal"}
                     onChange={(e) => setValue("source", e.target.value as PortalSource)}
-                    className={`flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50 ${errors.source ? "border-[#1d1dcc]" : "border-[#bdc8e4]"}`}
+                    className={`flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50 ${errors.source ? "border-[#d8301d]" : "border-[#bdc8e4]"}`}
                   >
                     <option value="portal">Website</option>
                     <option value="instagram">Instagram</option>
@@ -401,7 +401,7 @@ export default function PortalPage() {
                     <option value="other">Lainnya</option>
                   </select>
                   {errors.source && (
-                    <p className="text-xs text-[#1d1dcc]">{errors.source.message}</p>
+                    <p className="text-xs text-[#d8301d]">{errors.source.message}</p>
                   )}
                 </div>
               </div>
@@ -420,10 +420,10 @@ export default function PortalPage() {
                     id="last_experience"
                     placeholder="PT Company - Position (2 tahun)"
                     {...register("last_experience")}
-                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50"
                   />
                   {errors.last_experience && (
-                    <p className="text-xs text-[#1d1dcc]">{errors.last_experience.message}</p>
+                    <p className="text-xs text-[#d8301d]">{errors.last_experience.message}</p>
                   )}
                 </div>
 
@@ -436,10 +436,10 @@ export default function PortalPage() {
                     id="last_education"
                     placeholder="S1/D3/SMA - Jurusan - Universitas"
                     {...register("last_education")}
-                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50"
                   />
                   {errors.last_education && (
-                    <p className="text-xs text-[#1d1dcc]">{errors.last_education.message}</p>
+                    <p className="text-xs text-[#d8301d]">{errors.last_education.message}</p>
                   )}
                 </div>
 
@@ -452,7 +452,7 @@ export default function PortalPage() {
                     id="availability"
                     value={watch("availability") || ""}
                     onChange={(e) => setValue("availability", (e.target.value || undefined) as FormValues["availability"])}
-                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="">Pilih ketersediaan</option>
                     <option value="immediate">Secepatnya</option>
@@ -474,7 +474,7 @@ export default function PortalPage() {
                     value={formatSalary(salaryInput)}
                     onChange={handleSalaryChange}
                     placeholder="Rp 0"
-                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-[#bdc8e4] bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -487,13 +487,13 @@ export default function PortalPage() {
                 {/* CV Upload */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#40485c]">
-                    CV <span className="text-[#1d1dcc]">*</span>
+                    CV <span className="text-[#d8301d]">*</span>
                   </label>
                   <span className="text-xs text-[#40485c]">PDF/DOC, maks 2MB</span>
 
                   {cvFile ? (
                     <div className="flex items-center gap-3 rounded-lg border border-[#bdc8e4] bg-[#f8f9fa] p-4">
-                      <Upload className="h-5 w-5 shrink-0 text-[#1d1dcc]" />
+                      <Upload className="h-5 w-5 shrink-0 text-[#d8301d]" />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-[#191c1d]">{cvFile.name}</p>
                         <p className="text-xs text-[#40485c]">
@@ -505,11 +505,11 @@ export default function PortalPage() {
                         onClick={removeCv}
                         className="rounded p-1 transition-colors hover:bg-[#bdc8e4]"
                       >
-                        <X className="h-4 w-4 text-[#1d1dcc]" />
+                        <X className="h-4 w-4 text-[#d8301d]" />
                       </button>
                     </div>
                   ) : (
-                    <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#bdc8e4] p-6 transition-colors hover:border-[#1d1dcc] hover:bg-[#edeeef]">
+                    <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#bdc8e4] p-6 transition-colors hover:border-[#d8301d] hover:bg-[#edeeef]">
                       <Upload className="h-5 w-5 text-[#40485c]" />
                       <span className="text-xs font-medium text-[#191c1d]">Upload CV</span>
                       <input
@@ -525,7 +525,7 @@ export default function PortalPage() {
                 {/* Photo Upload */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold uppercase tracking-[0.12em] text-[#40485c]">
-                    Pas Foto <span className="text-[#1d1dcc]">*</span>
+                    Pas Foto <span className="text-[#d8301d]">*</span>
                   </label>
                   <span className="text-xs text-[#40485c]">JPG/PNG, maks 2MB</span>
 
@@ -549,11 +549,11 @@ export default function PortalPage() {
                         onClick={removePhoto}
                         className="rounded p-1 transition-colors hover:bg-[#bdc8e4]"
                       >
-                        <X className="h-4 w-4 text-[#1d1dcc]" />
+                        <X className="h-4 w-4 text-[#d8301d]" />
                       </button>
                     </div>
                   ) : (
-                    <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#bdc8e4] p-6 transition-colors hover:border-[#1d1dcc] hover:bg-[#edeeef]">
+                    <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#bdc8e4] p-6 transition-colors hover:border-[#d8301d] hover:bg-[#edeeef]">
                       <Upload className="h-5 w-5 text-[#40485c]" />
                       <span className="text-xs font-medium text-[#191c1d]">Upload Foto</span>
                       <input
@@ -567,7 +567,7 @@ export default function PortalPage() {
                 </div>
 
                 {fileError && (
-                  <div className="rounded-lg border border-[#1d1dcc] bg-[#e2eafd] p-4 text-sm text-[#1d1dcc]">
+                  <div className="rounded-lg border border-[#d8301d] bg-[#ffe5e0] p-4 text-sm text-[#d8301d]">
                     {fileError}
                   </div>
                 )}
@@ -581,16 +581,16 @@ export default function PortalPage() {
                 placeholder="Info tambahan..."
                 rows={3}
                 {...register("notes")}
-                className={`min-h-[100px] w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#1d1dcc] disabled:cursor-not-allowed disabled:opacity-50 ${errors.notes ? "border-[#1d1dcc]" : "border-[#bdc8e4]"}`}
+                className={`min-h-[100px] w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-[#d8301d] disabled:cursor-not-allowed disabled:opacity-50 ${errors.notes ? "border-[#d8301d]" : "border-[#bdc8e4]"}`}
               />
               {errors.notes && (
-                <p className="mt-1 text-xs text-[#1d1dcc]">{errors.notes.message}</p>
+                <p className="mt-1 text-xs text-[#d8301d]">{errors.notes.message}</p>
               )}
             </div>
 
             {/* Submit Error */}
             {submitError && (
-              <div className="rounded-lg border border-[#1d1dcc] bg-[#e2eafd] p-4 text-sm text-[#1d1dcc]">
+              <div className="rounded-lg border border-[#d8301d] bg-[#ffe5e0] p-4 text-sm text-[#d8301d]">
                 {submitError}
               </div>
             )}
@@ -599,7 +599,7 @@ export default function PortalPage() {
             <button
               type="submit"
               disabled={loading || !cvFile || !photoFile}
-              className="w-full rounded-full bg-[#1d1dcc] px-8 py-3.5 text-sm font-semibold uppercase tracking-[0.08em] text-white transition-all hover:bg-[#3d5edc] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-full bg-[#d8301d] px-8 py-3.5 text-sm font-semibold uppercase tracking-[0.08em] text-white transition-all hover:bg-[#fd4835] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -619,7 +619,7 @@ export default function PortalPage() {
           </form>
 
           <p className="mt-6 text-center text-xs text-[#40485c]">
-            Dengan mengirim lamaran, kamu menyetujui kebijakan privasi BCD Coffee
+            Dengan mengirim lamaran, kamu menyetujui kebijakan privasi KoMa
           </p>
         </section>
       </main>
@@ -628,26 +628,26 @@ export default function PortalPage() {
         <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-8 px-4 sm:px-6 md:grid-cols-2 lg:px-10">
           <div className="space-y-4">
             <div className="flex h-10 items-center">
-              <img src={logoUrl} alt="BCD Coffee Logo" className="h-full w-auto object-contain" />
+              <img src={logoUrl} alt="KoMa Logo" className="h-full w-auto object-contain" />
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-[#40485c]">
               Designing emotional experiences at the intersection of technology, art, and service.
             </p>
-            <p className="text-sm text-[#40485c]">© 2026 BCD Coffee. All rights reserved.</p>
+            <p className="text-sm text-[#40485c]">© 2026 KoMa. All rights reserved.</p>
           </div>
           <div className="flex flex-col justify-between gap-6 md:items-end">
             <div className="flex flex-wrap gap-4">
               {["LinkedIn", "Instagram", "Vimeo", "Privacy Policy", "Terms"].map((item) => (
-                <a key={item} href="#" className="text-sm text-[#40485c] transition-colors hover:text-[#1d1dcc]">
+                <a key={item} href="#" className="text-sm text-[#40485c] transition-colors hover:text-[#d8301d]">
                   {item}
                 </a>
               ))}
             </div>
             <Link href="#top" className="group flex items-center gap-1 text-[#40485c]">
-              <span className="text-xs font-semibold uppercase tracking-[0.12em] transition-colors group-hover:text-[#1d1dcc]">
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] transition-colors group-hover:text-[#d8301d]">
                 Back to top
               </span>
-              <ArrowUp className="h-3 w-3 text-[#1d1dcc]" />
+              <ArrowUp className="h-3 w-3 text-[#d8301d]" />
             </Link>
           </div>
         </div>
@@ -671,7 +671,7 @@ export default function PortalPage() {
               {/* Icon */}
               <div className="mb-6 flex justify-center">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#edeeef]">
-                  <CheckCircle className="h-10 w-10 text-[#1d1dcc]" />
+                  <CheckCircle className="h-10 w-10 text-[#d8301d]" />
                 </div>
               </div>
 
@@ -690,7 +690,7 @@ export default function PortalPage() {
               <div className="flex flex-col gap-3">
                 <Link
                   href="/career"
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1d1dcc] px-8 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-white transition-all hover:bg-[#3d5edc] active:scale-95"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#d8301d] px-8 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-white transition-all hover:bg-[#fd4835] active:scale-95"
                 >
                   Kembali ke Career Page
                 </Link>

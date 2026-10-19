@@ -66,7 +66,7 @@ export function CustomerHome() {
     setMemberView("card");
   }
 
-  const brandName = session?.brand_name || "BCD Coffee";
+  const brandName = session?.brand_name || "KoMa";
   const arkEnabled = session?.ark_enabled !== false;
   const xpEnabled = session?.xp_enabled !== false;
   const pickupOpen = Boolean(session?.pickup_open);
@@ -102,7 +102,7 @@ export function CustomerHome() {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="grid size-11 place-items-center rounded-2xl bg-white shadow">
-                <img src="/logos/bcd-coffee-icon.png?v=bcd" alt="" className="size-8 object-contain" />
+                <img src="/logos/kokmaju-icon.png?v=koma" alt="" className="size-8 object-contain" />
               </div>
               <div>
                 <div className="text-lg font-black leading-tight">{brandName}</div>

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seeder demo Dataroom BCD Coffee: struktur folder + dokumen contoh.
+ * Seeder demo Dataroom KoMa: struktur folder + dokumen contoh.
  *
  * Modul ini belum punya seeder sama sekali. Yang dibuat hanya METADATA node
  * (dataroom.nodes) — berkas fisiknya tidak diunggah, jadi dokumen demo tampil
@@ -24,7 +24,7 @@ const TREE = [
   {
     name: "Legal & Perizinan",
     docs: [
-      ["Akta Pendirian BCD Coffee.pdf", "application/pdf", 1_842_000],
+      ["Akta Pendirian KoMa.pdf", "application/pdf", 1_842_000],
       ["NIB & Izin Usaha.pdf", "application/pdf", 962_000],
       ["Sertifikat Halal.pdf", "application/pdf", 1_120_000],
     ],
@@ -61,7 +61,7 @@ const TREE = [
   {
     name: "Marketing",
     children: [
-      { name: "Brand Guideline", docs: [["BCD Coffee Brand Guideline.pdf", "application/pdf", 5_120_000]] },
+      { name: "Brand Guideline", docs: [["KoMa Brand Guideline.pdf", "application/pdf", 5_120_000]] },
       { name: "Materi Promosi", docs: [["Konten Feed Instagram.zip", "application/zip", 12_400_000]] },
     ],
   },

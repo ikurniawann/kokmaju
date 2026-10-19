@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seeder demo Sales Funneling / CRM BCD Coffee.
+ * Seeder demo Sales Funneling / CRM KoMa.
  *
  * Modul ini sama sekali belum punya seeder. Data demo dibuat menyebar di
  * beberapa tahap pipeline supaya kanban, forecast, dan laporan atribusi

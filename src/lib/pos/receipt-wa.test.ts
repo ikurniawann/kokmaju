@@ -199,7 +199,7 @@ describe("buildShiftReportMessage", () => {
 
 describe("buildMemberBillReminderMessage", () => {
   const base = {
-    outletName: "BCD Coffee",
+    outletName: "KoMa",
     customerName: "Budi",
     at: "2026-10-01T12:00:00.000Z",
     orders: [
@@ -214,7 +214,7 @@ describe("buildMemberBillReminderMessage", () => {
   it("memuat daftar order, total, yang sudah dibayar, dan sisa tagihan", () => {
     const message = buildMemberBillReminderMessage(base);
     expect(message).toContain("Halo *Budi*");
-    expect(message).toContain("*BCD Coffee*");
+    expect(message).toContain("*KoMa*");
     expect(message).toContain("1. POS-20260928-0001");
     expect(message).toContain("Rp 25.000");
     expect(message).toContain("Total order: Rp 647.000");

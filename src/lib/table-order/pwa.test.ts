@@ -5,9 +5,9 @@ import { customerAppManifest, needsIosInstallHint, tableCodeFromScan } from "./p
 
 describe("customerAppManifest", () => {
   it("syarat pasang: nama, start_url, standalone, ikon 192 & 512 + maskable", () => {
-    const m = customerAppManifest("BCD Coffee");
-    expect(m.name).toBe("BCD Coffee");
-    expect(m.short_name).toBe("BCD Coffee");
+    const m = customerAppManifest("KoMa");
+    expect(m.name).toBe("KoMa");
+    expect(m.short_name).toBe("KoMa");
     expect(m.start_url).toBe("/pesan?source=pwa");
     expect(m.scope).toBe("/");
     expect(m.display).toBe("standalone");

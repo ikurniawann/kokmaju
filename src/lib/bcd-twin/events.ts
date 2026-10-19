@@ -1,5 +1,5 @@
 /**
- * Peristiwa yang memicu animasi di peta BCD Twin — dari selisih dua snapshot
+ * Peristiwa yang memicu animasi di peta KoMa Twin — dari selisih dua snapshot
  * (mode live) atau langsung dari simulator (mode demo).
  */
 

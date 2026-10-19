@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seeder demo Inventory BCD Coffee: stok bahan baku & produk jadi,
+ * Seeder demo Inventory KoMa: stok bahan baku & produk jadi,
  * lengkap dengan riwayat pergerakan.
  *
  * Seeder bahan baku sebelumnya hanya mengisi DATA MASTER, sehingga semua item

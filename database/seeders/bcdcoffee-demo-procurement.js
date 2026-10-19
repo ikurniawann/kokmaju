@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seeder demo Procurement BCD Coffee: supplier, purchase request, purchase order.
+ * Seeder demo Procurement KoMa: supplier, purchase request, purchase order.
  *
  * Seeder supplier bawaan (purchasing-sulu-suppliers.js) membaca Excel milik
  * tenant lama yang tidak ada di repo ini, jadi daftar supplier di sini ditulis

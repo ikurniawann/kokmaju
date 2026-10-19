@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-require-imports -- seeder Node CommonJS, sama seperti seeder lain */
 /**
- * Seeder: menu BCD Coffee (Brewcode Coffee Dose) — sumber: papan menu resmi
+ * Seeder: menu KoMa (Brewcode Coffee Dose) — sumber: papan menu resmi
  * outlet Sukakarya, 2026-09-28.
  *
  * Mengisi dua sisi katalog sekaligus, karena POS butuh keduanya:

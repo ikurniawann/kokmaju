@@ -1,6 +1,11 @@
-# BCD Coffee OS
+# KoMa OS
 
-BCD Coffee OS adalah ERP terpadu berbasis Next.js dan PostgreSQL native untuk operasional Aapex Technology. Sistem ini mencakup HRIS, rekrutmen, POS, CRM loyalty, purchasing, inventory, produksi, reporting QA, BCD Coffee OS desktop, serta beberapa self-service flow untuk customer.
+ERP/POS untuk **Gerobak KoMa** ([@kokmaju](https://www.instagram.com/kokmaju/)) — instance
+`kokmaju.reddie.id`, diklon dari basis kode BCD Coffee OS lalu di-rebrand: logo vektor
+"Gerobak KoMa" (`docs/design/brand/`), palet merah-oranye `#fd4835` / primary `#d8301d`,
+lettering kuning `#f9e04f`, wallpaper doodle ayam jago.
+
+KoMa OS adalah ERP terpadu berbasis Next.js dan PostgreSQL native. Sistem ini mencakup HRIS, rekrutmen, POS, CRM loyalty, purchasing, inventory, produksi, reporting QA, KoMa OS desktop, serta beberapa self-service flow untuk customer.
 
 Database memakai PostgreSQL biasa (driver `pg`), auth/session di-handle di application layer (bcrypt + cookie session), dan data layer memakai shim ringan di `src/lib/db-client` yang meniru subset API PostgREST.
 
@@ -11,18 +16,18 @@ Database memakai PostgreSQL biasa (driver `pg`), auth/session di-handle di appli
 | Framework | Next.js App Router, React |
 | Database | PostgreSQL (driver `pg`), schema-per-domain |
 | Auth | Custom (bcrypt + cookie session), schema `auth` |
-| Styling | Tailwind CSS v4, shadcn/ui, custom BCD Coffee OS design system |
+| Styling | Tailwind CSS v4, shadcn/ui, custom KoMa OS design system |
 | Data & Form | React Hook Form, Zod, TanStack Query |
 | Charts | Recharts |
 | Drag & Drop | @hello-pangea/dnd |
 | Email | Resend |
 | WhatsApp | Fonnte API |
 | Deployment | Vercel |
-| AI | Ollama cloud models untuk BCD Coffee OS AI Assistant |
+| AI | Ollama cloud models untuk KoMa OS AI Assistant |
 
 ## Module Overview
 
-### BCD Coffee OS Desktop
+### KoMa OS Desktop
 
 Route utama:
 - `/arkiv-os`
@@ -31,7 +36,7 @@ Route utama:
 Fitur:
 - Desktop-style launcher untuk membuka module bisnis dalam window.
 - AI Assistant dengan mode context project atau general knowledge.
-- Pengaturan AI Assistant di BCD Coffee OS Settings, termasuk pilihan LLM.
+- Pengaturan AI Assistant di KoMa OS Settings, termasuk pilihan LLM.
 - QA progress dashboard sementara di `/qa` untuk ringkasan progress dan test result.
 
 Dokumentasi terkait:
@@ -291,7 +296,7 @@ Fitur:
 - Position.
 - Employment status.
 - Global settings.
-- BCD Coffee OS settings.
+- KoMa OS settings.
 
 ## API Surface
 
@@ -393,7 +398,7 @@ Catatan: sebagian logic CRM berada di `src/lib/crm/loyalty-engine.ts` dan dipang
 
 | Method | Endpoint | Deskripsi |
 | --- | --- | --- |
-| POST | `/api/ai/assistant` | BCD Coffee OS AI Assistant |
+| POST | `/api/ai/assistant` | KoMa OS AI Assistant |
 
 ## Database Highlights
 
@@ -620,7 +625,7 @@ Role valid mengikuti constraint `configuration.users.role`:
 
 ## Design Notes
 
-- BCD Coffee OS memakai aksen pink sebagai primary action.
+- KoMa OS memakai aksen pink sebagai primary action.
 - Dashboard operasional dibuat padat, scannable, dan action-oriented.
 - POS dan self-service flow mengutamakan touch-friendly controls.
 - Purchasing memakai istilah operasional Indonesia seperti Barang Masuk, Produksi, dan Recipe/BOM.

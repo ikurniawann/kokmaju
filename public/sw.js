@@ -1,5 +1,5 @@
 /*
- * BCD POS — service worker.
+ * KoMa POS — service worker.
  * Tujuan: halaman kasir (/dashboard/pos/*) tetap bisa DIBUKA saat internet
  * putus, bukan cuma bertahan selama tab masih terbuka. Data transaksi
  * offline sendiri disimpan aplikasi di IndexedDB (lihat src/lib/pos-db.ts).

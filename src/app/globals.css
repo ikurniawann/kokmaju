@@ -4,22 +4,23 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Palet `pink-*` Tailwind ditimpa dengan skala biru BCD Coffee (warna logo
-   #1d1dcc). Ratusan komponen memakai kelas pink-* secara langsung; menimpa palet
-   di sini menyelaraskan semuanya tanpa menyentuh tiap file. Skala dibangun dengan
-   mempertahankan lightness OKLab skala lama, jadi kontras tiap shade tidak berubah. */
+/* Palet `pink-*` Tailwind ditimpa dengan skala merah-oranye KoMa (logo Gerobak
+   KoMa #fd4835 = shade 500; shade 700 #d8301d = --brand-primary, warna tombol
+   dengan kontras AA terhadap teks putih). Ratusan komponen memakai kelas pink-*
+   secara langsung; menimpa palet di sini menyelaraskan semuanya tanpa menyentuh
+   tiap file. Posisi shade mengikuti skala lama (50 hampir putih → 950 tergelap). */
 @theme {
-  --color-pink-50: #f2f6fe;
-  --color-pink-100: #e2eafd;
-  --color-pink-200: #c5d4f9;
-  --color-pink-300: #9cb4f3;
-  --color-pink-400: #6a8ae8;
-  --color-pink-500: #3d5edc;
-  --color-pink-600: #2941d3;
-  --color-pink-700: #1d1dcc;
-  --color-pink-800: #121296;
-  --color-pink-900: #0d0d7c;
-  --color-pink-950: #05054b;
+  --color-pink-50: #fff4f2;
+  --color-pink-100: #ffe5e0;
+  --color-pink-200: #ffcdc4;
+  --color-pink-300: #ffa898;
+  --color-pink-400: #ff7a63;
+  --color-pink-500: #fd4835;
+  --color-pink-600: #ec3a26;
+  --color-pink-700: #d8301d;
+  --color-pink-800: #b02617;
+  --color-pink-900: #8c2116;
+  --color-pink-950: #4d0d07;
 }
 
 /* Bind the `dark:` variant to our explicit theme attribute (manual + auto). */
@@ -60,8 +61,8 @@
 
 :root {
   /* Brand inputs — overridden at runtime by ThemeProvider. */
-  --brand-primary: #1d1dcc;
-  --brand-secondary: #2941d3;
+  --brand-primary: #d8301d;
+  --brand-secondary: #ec3a26;
   --primary-foreground: #ffffff;
 
   /* Derived brand scales (perceptual mix in OKLCH). */
@@ -111,11 +112,11 @@
   --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.85);
 
   /* Chrome — overridden by company appearance. */
-  --sidebar-background: #f4f6fe;
+  --sidebar-background: #fff7f5;
   --sidebar-foreground: #0f172a;
-  --sidebar-active-background: #1d1dcc;
+  --sidebar-active-background: #d8301d;
   --sidebar-active-foreground: #ffffff;
-  --sidebar-border: #d9dffb;
+  --sidebar-border: #ffd9d1;
   --navbar-background: #ffffff;
   --navbar-foreground: #0f172a;
   --navbar-border: #f3f4f6;
@@ -1116,21 +1117,21 @@ hr {
     [class^="bg-pink-100/"],
     [class*=" bg-pink-100/"]
   ) {
-    background-color: color-mix(in oklch, #2941d3 14%, transparent) !important;
-    border-color: color-mix(in oklch, #2941d3 30%, transparent) !important;
+    background-color: color-mix(in oklch, #ec3a26 14%, transparent) !important;
+    border-color: color-mix(in oklch, #ec3a26 30%, transparent) !important;
   }
   [data-theme="auto"] .arkiv-dashboard-theme :is(
     .hover\:bg-pink-50:hover,
     [class*="hover:bg-pink-50/"]:hover,
     .hover\:bg-pink-100:hover,
     [class*="hover:bg-pink-100/"]:hover
-  ) { background-color: color-mix(in oklch, #2941d3 22%, transparent) !important; }
+  ) { background-color: color-mix(in oklch, #ec3a26 22%, transparent) !important; }
   [data-theme="auto"] .arkiv-dashboard-theme :is(
     .text-pink-600,
     .text-pink-700,
     .text-pink-800,
     .text-pink-900
-  ) { color: color-mix(in oklch, #2941d3 42%, white) !important; }
+  ) { color: color-mix(in oklch, #ec3a26 42%, white) !important; }
   [data-theme="auto"] .arkiv-dashboard-theme :is(
     .border-pink-100,
     [class*=" border-pink-100/"],
@@ -1138,7 +1139,7 @@ hr {
     [class*=" border-pink-200/"],
     .border-pink-300,
     [class*=" border-pink-300/"]
-  ) { border-color: color-mix(in oklch, #2941d3 30%, transparent) !important; }
+  ) { border-color: color-mix(in oklch, #ec3a26 30%, transparent) !important; }
   [data-theme="auto"] .arkiv-dashboard-theme :is(
     .bg-rose-50,
     [class^="bg-rose-50/"],
@@ -1258,17 +1259,17 @@ hr {
     .from-pink-50,
     .from-pink-100,
     .from-pink-200
-  ) { --tw-gradient-from: color-mix(in oklch, #2941d3 14%, transparent) !important; }
+  ) { --tw-gradient-from: color-mix(in oklch, #ec3a26 14%, transparent) !important; }
   [data-theme="auto"] .arkiv-dashboard-theme :is(
     .via-pink-50,
     .via-pink-100,
     .via-pink-200
-  ) { --tw-gradient-via: color-mix(in oklch, #2941d3 14%, transparent) !important; }
+  ) { --tw-gradient-via: color-mix(in oklch, #ec3a26 14%, transparent) !important; }
   [data-theme="auto"] .arkiv-dashboard-theme :is(
     .to-pink-50,
     .to-pink-100,
     .to-pink-200
-  ) { --tw-gradient-to: color-mix(in oklch, #2941d3 14%, transparent) !important; }
+  ) { --tw-gradient-to: color-mix(in oklch, #ec3a26 14%, transparent) !important; }
   [data-theme="auto"] .arkiv-dashboard-theme :is(
     .from-amber-50,
     .from-amber-100,
@@ -1578,13 +1579,13 @@ hr {
     .divide-pink-100,
     .divide-pink-200,
     .divide-pink-300
-  ) > :not(:last-child) { border-color: color-mix(in oklch, #2941d3 30%, transparent) !important; }
+  ) > :not(:last-child) { border-color: color-mix(in oklch, #ec3a26 30%, transparent) !important; }
   [data-theme="auto"] .arkiv-dashboard-theme :is(
     .ring-pink-50,
     .ring-pink-100,
     .ring-pink-200,
     .ring-pink-300
-  ) { --tw-ring-color: color-mix(in oklch, #2941d3 30%, transparent) !important; }
+  ) { --tw-ring-color: color-mix(in oklch, #ec3a26 30%, transparent) !important; }
   [data-theme="auto"] .arkiv-dashboard-theme :is(
     .divide-rose-50,
     .divide-rose-100,
@@ -2098,21 +2099,21 @@ hr {
   [class^="bg-pink-100/"],
   [class*=" bg-pink-100/"]
 ) {
-  background-color: color-mix(in oklch, #2941d3 14%, transparent) !important;
-  border-color: color-mix(in oklch, #2941d3 30%, transparent) !important;
+  background-color: color-mix(in oklch, #ec3a26 14%, transparent) !important;
+  border-color: color-mix(in oklch, #ec3a26 30%, transparent) !important;
 }
 [data-theme="dark"] .arkiv-dashboard-theme :is(
   .hover\:bg-pink-50:hover,
   [class*="hover:bg-pink-50/"]:hover,
   .hover\:bg-pink-100:hover,
   [class*="hover:bg-pink-100/"]:hover
-) { background-color: color-mix(in oklch, #2941d3 22%, transparent) !important; }
+) { background-color: color-mix(in oklch, #ec3a26 22%, transparent) !important; }
 [data-theme="dark"] .arkiv-dashboard-theme :is(
   .text-pink-600,
   .text-pink-700,
   .text-pink-800,
   .text-pink-900
-) { color: color-mix(in oklch, #2941d3 42%, white) !important; }
+) { color: color-mix(in oklch, #ec3a26 42%, white) !important; }
 [data-theme="dark"] .arkiv-dashboard-theme :is(
   .border-pink-100,
   [class*=" border-pink-100/"],
@@ -2120,7 +2121,7 @@ hr {
   [class*=" border-pink-200/"],
   .border-pink-300,
   [class*=" border-pink-300/"]
-) { border-color: color-mix(in oklch, #2941d3 30%, transparent) !important; }
+) { border-color: color-mix(in oklch, #ec3a26 30%, transparent) !important; }
 [data-theme="dark"] .arkiv-dashboard-theme :is(
   .bg-rose-50,
   [class^="bg-rose-50/"],
@@ -2240,17 +2241,17 @@ hr {
   .from-pink-50,
   .from-pink-100,
   .from-pink-200
-) { --tw-gradient-from: color-mix(in oklch, #2941d3 14%, transparent) !important; }
+) { --tw-gradient-from: color-mix(in oklch, #ec3a26 14%, transparent) !important; }
 [data-theme="dark"] .arkiv-dashboard-theme :is(
   .via-pink-50,
   .via-pink-100,
   .via-pink-200
-) { --tw-gradient-via: color-mix(in oklch, #2941d3 14%, transparent) !important; }
+) { --tw-gradient-via: color-mix(in oklch, #ec3a26 14%, transparent) !important; }
 [data-theme="dark"] .arkiv-dashboard-theme :is(
   .to-pink-50,
   .to-pink-100,
   .to-pink-200
-) { --tw-gradient-to: color-mix(in oklch, #2941d3 14%, transparent) !important; }
+) { --tw-gradient-to: color-mix(in oklch, #ec3a26 14%, transparent) !important; }
 [data-theme="dark"] .arkiv-dashboard-theme :is(
   .from-amber-50,
   .from-amber-100,
@@ -2560,13 +2561,13 @@ hr {
   .divide-pink-100,
   .divide-pink-200,
   .divide-pink-300
-) > :not(:last-child) { border-color: color-mix(in oklch, #2941d3 30%, transparent) !important; }
+) > :not(:last-child) { border-color: color-mix(in oklch, #ec3a26 30%, transparent) !important; }
 [data-theme="dark"] .arkiv-dashboard-theme :is(
   .ring-pink-50,
   .ring-pink-100,
   .ring-pink-200,
   .ring-pink-300
-) { --tw-ring-color: color-mix(in oklch, #2941d3 30%, transparent) !important; }
+) { --tw-ring-color: color-mix(in oklch, #ec3a26 30%, transparent) !important; }
 [data-theme="dark"] .arkiv-dashboard-theme :is(
   .divide-rose-50,
   .divide-rose-100,
@@ -2740,8 +2741,8 @@ hr {
 /* ==========================================================================
    Portal Member (member.within.ventures) — EPIC-011 Fase D / revisi UI.
 
-   Arah desain: "playful premium". Brand BCD Coffee memakai lettering
-   geometris tegas berwarna biru elektrik; portal ini dipakai customer, jadi
+   Arah desain: "playful premium". Brand KoMa memakai lettering
+   tebal merah ber-outline kuning; portal ini dipakai customer, jadi
    karakter brand dipertahankan sementara kartu saldo digarap sekelas kartu
    m-banking (kedalaman, guilloche, angka tabular).
 

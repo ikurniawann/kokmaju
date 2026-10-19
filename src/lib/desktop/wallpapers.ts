@@ -34,8 +34,9 @@ export const WALLPAPER_STORAGE_KEY = "arkiv-wallpaper";
  * localStorage/user_desktop_prefs — mengganti id akan mereset pilihan user.
  */
 export const BUILTIN_WALLPAPERS: WallpaperItem[] = [
-  { id: "arkiv", name: `${brandName()} Blue`, src: "/bg-bcd.webp" },
-  { id: "pink", name: "Indigo Dusk", src: "linear-gradient(135deg,#0b0f1b,#1d2d66 45%,#111827)" },
+  { id: "arkiv", name: `${brandName()} Merah`, src: "/bg-kokmaju.webp" },
+  { id: "kuning", name: `${brandName()} Kuning`, src: "/bg-kokmaju-kuning.webp" },
+  { id: "pink", name: "Bara Senja", src: "linear-gradient(135deg,#1b0b08,#6b1d12 45%,#111827)" },
   { id: "midnight", name: "Midnight", src: "linear-gradient(135deg,#030712,#111827 52%,#1e1b4b)" },
   { id: "glass", name: "Glass Blue", src: "linear-gradient(135deg,#082f49,#0f172a 48%,#312e81)" },
 ];

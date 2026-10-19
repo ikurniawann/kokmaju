@@ -13,6 +13,6 @@ export async function GET() {
     return NextResponse.json({ success: true, data: await buildTwinSnapshot() });
   } catch (error) {
     console.error("[bcd-twin] snapshot:", error);
-    return NextResponse.json({ success: false, error: "Gagal memuat data BCD Twin" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Gagal memuat data KoMa Twin" }, { status: 500 });
   }
 }

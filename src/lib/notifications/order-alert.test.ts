@@ -5,7 +5,7 @@ import { buildOrderAlertMessage, parseOrderAlertConfig } from "./order-alert";
 describe("buildOrderAlertMessage", () => {
   it("meja, antrean, item + varian/add-on, catatan, total & status bayar", () => {
     const text = buildOrderAlertMessage({
-      brandName: "BCD Coffee",
+      brandName: "KoMa",
       sourceLabel: "Self-order QR",
       tableLabel: "WIT. Office Bandung",
       orderType: "dine_in",
@@ -25,7 +25,7 @@ describe("buildOrderAlertMessage", () => {
     expect(text).toBe(
       [
         "🛎️ Pesanan baru — Self-order QR",
-        "BCD Coffee",
+        "KoMa",
         "Meja WIT. Office Bandung · Makan di tempat",
         "Antrean 004 · POS-20260928-0004",
         "Atas nama: Budi · WA 081234567890",
@@ -41,7 +41,7 @@ describe("buildOrderAlertMessage", () => {
 
   it("bawa pulang & lunas, tanpa meja/nama/catatan", () => {
     const text = buildOrderAlertMessage({
-      brandName: "BCD Coffee",
+      brandName: "KoMa",
       sourceLabel: "Self-order QR",
       tableLabel: null,
       orderType: "takeaway",
@@ -84,7 +84,7 @@ describe("isTelegramBotToken", () => {
 describe("nama pemesan member", () => {
   it("member ditandai (member)", () => {
     const text = buildOrderAlertMessage({
-      brandName: "BCD Coffee", sourceLabel: "Self-order QR", tableLabel: "A1", orderType: "dine_in",
+      brandName: "KoMa", sourceLabel: "Self-order QR", tableLabel: "A1", orderType: "dine_in",
       queueNumber: "001", orderNumber: "POS-1", paymentLabel: "ARK Coin", paid: true, total: 1000,
       guestName: "Riksa", guestPhone: "081200001111", isMember: true, items: [{ name: "Espresso", quantity: 1 }],
     });
@@ -95,7 +95,7 @@ describe("nama pemesan member", () => {
 describe("link Buatkan Pesanan", () => {
   it("ditambahkan di akhir pesan bila ada actionUrl", () => {
     const text = buildOrderAlertMessage({
-      brandName: "BCD Coffee", sourceLabel: "Self-order QR", tableLabel: "A1", orderType: "dine_in",
+      brandName: "KoMa", sourceLabel: "Self-order QR", tableLabel: "A1", orderType: "dine_in",
       queueNumber: "003", orderNumber: "POS-3", paymentLabel: "Bayar di kasir", paid: false, total: 78000,
       items: [{ name: "Dirty Latte", quantity: 1 }],
       actionUrl: "https://poskopi.reddie.id/dashboard/pos/self-orders?order=abc",

@@ -10,7 +10,7 @@
   display: grid;
   place-items: center;
   pointer-events: none;
-  background: var(--primary, #2b2fae) center / cover no-repeat;
+  background: var(--primary, #fd4835) center / cover no-repeat;
   color: #fff;
   font-weight: 900;
   font-size: 22px;

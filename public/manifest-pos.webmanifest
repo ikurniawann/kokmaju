@@ -1,13 +1,13 @@
 {
-  "name": "BCD Coffee POS Kasir",
+  "name": "KoMa POS Kasir",
   "short_name": "POS Kasir",
-  "description": "Mode tablet / kiosk untuk kasir BCD Coffee POS",
+  "description": "Mode tablet / kiosk untuk kasir KoMa POS",
   "start_url": "/dashboard/pos/tablet",
   "scope": "/dashboard/pos/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#ffffff",
-  "theme_color": "#e11d48",
+  "theme_color": "#d8301d",
   "lang": "id",
   "icons": [
     {

@@ -24,7 +24,7 @@ function renderCard(overrides: Partial<Parameters<typeof MemberCardScreen>[0]> =
   const props = {
     open: true,
     member,
-    brandName: "BCD Coffee",
+    brandName: "KoMa",
     arkEnabled: false,
     xpEnabled: true,
     busy: false,
@@ -42,7 +42,7 @@ describe("MemberCardScreen", () => {
     expect(screen.getByText("Banu Rusman")).toBeTruthy();
     expect(screen.getByText("085720405305")).toBeTruthy();
     expect(screen.getByText("GOLD")).toBeTruthy();
-    expect(screen.getByText("BCD COFFEE · MEMBER")).toBeTruthy();
+    expect(screen.getByText("KOMA · MEMBER")).toBeTruthy();
     expect(container.querySelector(".mcs-qr svg")).toBeTruthy();
     expect(container.querySelector(".mcs-tag")?.textContent).toMatch(/TOTAL BELANJA.*1\.250\.000.*14 kunjungan/);
     expect(screen.getByText(/Member sejak Maret 2026/)).toBeTruthy();

@@ -13,13 +13,13 @@ const payload = {
   chargesBreakdown: [{ amount: 6480, kind: "tax" }],
   total: 71280,
   change: 28720,
-  receiptHeader: ["BCD Coffee Sukakarya", "Jl. Sukakarya"],
+  receiptHeader: ["KoMa Sukakarya", "Jl. Sukakarya"],
 };
 
 describe("receiptFromPayload", () => {
   it("item, rincian & total sesuai payload kasir", () => {
     const r = receiptFromPayload(payload, "Tunai");
-    expect(r.outlet).toBe("BCD Coffee Sukakarya");
+    expect(r.outlet).toBe("KoMa Sukakarya");
     expect(r.queue).toBe("012");
     expect(r.items[0]).toEqual({ qty: 2, name: "Iced Light", detail: "Extra Shot", amount: 50000 });
     expect(r.items[1].detail).toBe("Butter");
@@ -39,7 +39,7 @@ describe("receiptFromPayload", () => {
     expect(r.totals.map((t) => t.label)).toEqual(["Subtotal", "Total"]);
     expect(r.items).toHaveLength(MAX_ANIMATED_ITEMS);
     expect(r.hiddenItems).toBe(2);
-    expect(r.outlet).toBe("BCD Coffee");
+    expect(r.outlet).toBe("KoMa");
   });
 });
 

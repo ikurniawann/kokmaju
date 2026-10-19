@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seeder demo Accounting BCD Coffee: tahun buku, periode, dan jurnal contoh.
+ * Seeder demo Accounting KoMa: tahun buku, periode, dan jurnal contoh.
  *
  * Melengkapi accounting-sulu-coa.js yang hanya mengisi Chart of Accounts.
  * Tanpa fiscal_periods, jurnal tidak bisa dibuat sama sekali karena

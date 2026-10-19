@@ -39,7 +39,7 @@ const GRANULARITY_OPTIONS: Array<{
 ];
 
 const CHART_COLORS = [
-  "#1d1dcc",
+  "#d8301d",
   "#0ea5e9",
   "#10b981",
   "#f59e0b",

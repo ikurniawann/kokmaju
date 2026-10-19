@@ -70,7 +70,7 @@ import { OrderTracking } from "./order-tracking";
 import { VariantSheet } from "./variant-sheet";
 import { DecrementSheet } from "./decrement-sheet";
 
-const HERO_IMAGE = "/bg-bcd.webp";
+const HERO_IMAGE = "/bg-kokmaju.webp";
 
 type View = "menu" | "tracking" | "orders";
 
@@ -139,7 +139,7 @@ export function TableOrderApp({ tableCode, homeHref }: { tableCode: string; home
     [cart, charges, memberDiscountPct]
   );
   const tableLabel = session?.table_label || tableCode;
-  const brandName = session?.brand_name || "BCD Coffee";
+  const brandName = session?.brand_name || "KoMa";
 
   const showToast = useCallback((message: string) => {
     setToast(message);
@@ -530,11 +530,11 @@ export function TableOrderApp({ tableCode, homeHref }: { tableCode: string; home
                 className="flex h-11 items-center gap-1 rounded-full bg-white/95 pl-2 pr-3 text-gray-800 shadow"
               >
                 <ChevronLeft className="size-5" />
-                <img src="/logos/bcd-coffee-icon.png?v=bcd" alt={brandName} className="size-7 object-contain" />
+                <img src="/logos/kokmaju-icon.png?v=koma" alt={brandName} className="size-7 object-contain" />
               </Link>
             ) : (
               <div className="flex size-11 items-center justify-center rounded-full bg-white/95 shadow">
-                <img src="/logos/bcd-coffee-icon.png?v=bcd" alt={brandName} className="size-7 object-contain" />
+                <img src="/logos/kokmaju-icon.png?v=koma" alt={brandName} className="size-7 object-contain" />
               </div>
             )}
             <div className="flex items-center gap-2">

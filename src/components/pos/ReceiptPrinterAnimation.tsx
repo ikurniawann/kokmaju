@@ -44,7 +44,7 @@ export function ReceiptPrinterAnimation({
       onClick={() => setInstant(true)}
     >
       <div className={`rcpt-printer${!instant && !done ? " printing" : ""}`} aria-hidden>
-        <span className="rcpt-brand">BCD</span>
+        <span className="rcpt-brand">KoMa</span>
         <span className="rcpt-led" />
       </div>
       <div className="rcpt-clip" aria-hidden>

@@ -3015,7 +3015,7 @@ function AiAssistantWindow({
               </div>
               <h3 className="text-xl font-bold text-white/90">Do</h3>
               <p className="mt-2 max-w-sm text-sm leading-6 text-white/55">
-                Asisten operasional BCD. Data yang bisa diakses mengikuti hak menu Anda. Mode {activeScope.label} memakai {activeModel.label}.
+                Asisten operasional KoMa. Data yang bisa diakses mengikuti hak menu Anda. Mode {activeScope.label} memakai {activeModel.label}.
               </p>
               <button
                 onClick={startNewChat}

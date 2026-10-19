@@ -1,5 +1,5 @@
 /**
- * Mode demo BCD Twin — simulator coffee shop deterministik (seed) utk
+ * Mode demo KoMa Twin — simulator coffee shop deterministik (seed) utk
  * presentasi saat data produksi masih sepi. Menghasilkan TwinSnapshot yang
  * sama bentuknya dgn mode live + daftar peristiwa utk animasi.
  */
@@ -199,7 +199,7 @@ export function demoSnapshot(state: DemoState): TwinSnapshot {
   return {
     mode: "demo",
     generatedAt: new Date(state.startedAt + state.clock * 1000).toISOString(),
-    outlet: "BCD Coffee (Demo)",
+    outlet: "KoMa (Demo)",
     sales: {
       revenueToday: state.revenueToday,
       ordersToday: state.ordersToday,

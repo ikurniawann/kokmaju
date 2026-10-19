@@ -20,7 +20,7 @@ vi.mock("@/lib/pos/member-bill-server", () => ({
   getMemberBillDetail: (...args: unknown[]) => getMemberBillDetail(...args),
 }));
 vi.mock("@/lib/whatsapp", () => ({ sendWhatsAppText: (...args: unknown[]) => sendWhatsAppText(...args) }));
-vi.mock("@/lib/db", () => ({ queryOne: async () => ({ name: "BCD Coffee" }) }));
+vi.mock("@/lib/db", () => ({ queryOne: async () => ({ name: "KoMa" }) }));
 vi.mock("@/lib/rate-limit", () => ({ checkRateLimit: () => ({ allowed: true }) }));
 
 const CUSTOMER = "11111111-1111-4111-8111-111111111111";
