@@ -1,0 +1,253 @@
+/* Animasi "Bayar → Struk" kasir mobile (owner KoMa 2026-10-19, referensi reel
+   PathLink "Riff · Pay → Receipt"): tombol bayar berubah jadi pil "Lunas"
+   hijau, lalu kertas struk naik keluar dari balik tombol. Durasi total ±2,4s. */
+
+.prx {
+  --prx-paper: #fffdf8;
+  --prx-ink: #1f1a17;
+  --prx-muted: #8a817a;
+  --prx-ok: #16a34a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.prx-stage {
+  position: relative;
+  width: min(300px, 84vw);
+}
+
+/* Area kertas: dasar klip = tengah tombol, jadi struk tampak keluar dari tombol. */
+.prx-clip {
+  overflow: hidden;
+  padding: 14px 10px 0;
+  margin: 0 -10px;
+}
+
+.prx-paper {
+  position: relative;
+  background: var(--prx-paper);
+  color: var(--prx-ink);
+  font-family: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  line-height: 1.55;
+  padding: 18px 18px 46px;
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.35), 0 2px 6px rgb(0 0 0 / 0.06);
+  transform: translateY(102%);
+  animation: prx-rise 1.15s cubic-bezier(0.18, 0.9, 0.22, 1) 0.8s forwards;
+}
+
+/* Tepi atas bergerigi (kertas sobek). */
+.prx-paper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -9px;
+  height: 10px;
+  background:
+    linear-gradient(-45deg, var(--prx-paper) 5px, transparent 0) 0 100% / 10px 10px repeat-x,
+    linear-gradient(45deg, var(--prx-paper) 5px, transparent 0) 0 100% / 10px 10px repeat-x;
+}
+
+.prx-head {
+  text-align: center;
+}
+.prx-brand {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.32em;
+}
+.prx-sub {
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  color: var(--prx-muted);
+  text-transform: uppercase;
+}
+.prx-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--prx-muted);
+}
+.prx-queue {
+  margin: 10px 0 2px;
+  text-align: center;
+}
+.prx-queue small {
+  display: block;
+  font-size: 9.5px;
+  letter-spacing: 0.24em;
+  color: var(--prx-muted);
+}
+.prx-queue b {
+  display: block;
+  font-size: 34px;
+  line-height: 1.05;
+  letter-spacing: 0.06em;
+}
+.prx-rule {
+  border: 0;
+  border-top: 1px dashed #cfc6bd;
+  margin: 10px 0;
+}
+.prx-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.prx-row .n {
+  min-width: 0;
+}
+.prx-row .d {
+  display: block;
+  color: var(--prx-muted);
+  font-size: 10px;
+}
+.prx-row .a {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.prx-row.muted {
+  color: var(--prx-muted);
+}
+.prx-row.ok {
+  color: var(--prx-ok);
+  font-weight: 600;
+}
+.prx-row.strong {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.prx-line {
+  opacity: 0;
+  transform: translateY(3px);
+  animation: prx-line 0.28s ease-out forwards;
+}
+.prx-barcode {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 1px;
+  height: 34px;
+  margin-top: 12px;
+}
+.prx-barcode i {
+  display: block;
+  background: var(--prx-ink);
+}
+.prx-thanks {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 9.5px;
+  letter-spacing: 0.24em;
+  color: var(--prx-muted);
+}
+
+/* ---- Tombol: Bayar → (tekan) → Lunas ---------------------------------- */
+.prx-pill {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  margin: -26px 8px 0;
+  border-radius: 999px;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  background: var(--primary, #d8301d);
+  box-shadow: 0 14px 28px -12px rgb(0 0 0 / 0.45);
+  animation:
+    prx-press 0.42s ease-out 0.08s both,
+    prx-green 0.32s ease-out 0.5s forwards;
+}
+.prx-pill > span {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.prx-pay {
+  animation: prx-out 0.18s ease-in 0.42s forwards;
+}
+.prx-paid {
+  opacity: 0;
+  transform: scale(0.85);
+  animation: prx-in 0.3s cubic-bezier(0.2, 1.4, 0.4, 1) 0.6s forwards;
+}
+.prx-paid svg {
+  width: 20px;
+  height: 20px;
+}
+.prx-paid path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: prx-draw 0.35s ease-out 0.72s forwards;
+}
+
+/* Lewati animasi (ketuk) & pengguna yang mematikan animasi. */
+.prx.instant *,
+.prx.instant *::before {
+  animation-delay: 0s !important;
+  animation-duration: 0.01s !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .prx *,
+  .prx *::before {
+    animation-delay: 0s !important;
+    animation-duration: 0.01s !important;
+  }
+}
+
+@keyframes prx-rise {
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes prx-line {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes prx-press {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(0.93);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes prx-green {
+  to {
+    background: var(--prx-ok);
+  }
+}
+@keyframes prx-out {
+  to {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+@keyframes prx-in {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes prx-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

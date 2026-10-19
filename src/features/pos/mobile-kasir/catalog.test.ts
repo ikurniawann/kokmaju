@@ -7,6 +7,7 @@ import {
   isMobileSellable,
   kasirPaymentOptions,
   quickCashAmounts,
+  receiptBarcodeBars,
   toKasirProduct,
   toPosCart,
 } from "./catalog";
@@ -167,5 +168,15 @@ describe("kasirPaymentOptions", () => {
   it("Static QRIS disembunyikan bila gambar QRIS belum diatur", () => {
     const codes = kasirPaymentOptions(methods, { staticQrisAvailable: false, isFoc }).map((m) => m.code);
     expect(codes).not.toContain("static_qris");
+  });
+});
+
+describe("receiptBarcodeBars", () => {
+  it("deterministik per nomor order, lebar 1–3", () => {
+    const a = receiptBarcodeBars("POS-20261019-0001");
+    expect(a).toHaveLength(44);
+    expect(a.every((w) => w >= 1 && w <= 3)).toBe(true);
+    expect(receiptBarcodeBars("POS-20261019-0001")).toEqual(a);
+    expect(receiptBarcodeBars("POS-20261019-0002")).not.toEqual(a);
   });
 });

@@ -45,6 +45,7 @@ penggunanya **kasir** dan transaksinya langsung lunas lewat checkout kasir.
 - [x] Halaman kasir mobile, sheet keranjang/bayar, layar sukses, riwayat
 - [x] Rute `/pos/kasir`, `/kasir`, redirect login, manifest
 - [x] Seeder menu contoh `kokmaju-demo-menu.js` & akun `kokmaju-kasir-users.js`
+- [x] Animasi "Bayar → Struk" di layar sukses (referensi reel PathLink "Pay → Receipt"), diputar ulang tiap Cetak struk
 - [ ] Ganti menu contoh dengan menu & harga asli KoMa
 - [ ] Atur gambar QRIS statis (Settings → Payment Gateways) bila dipakai
 - [ ] Tinjau pajak bawaan 10% (POS → Billing) untuk gerobak
@@ -68,3 +69,8 @@ penggunanya **kasir** dan transaksinya langsung lunas lewat checkout kasir.
   asli. DB dibangun ulang di database baru `kokmaju_app` (DB lama `kokmaju`
   dibiarkan, dump di docker-infra/kokmaju/backups); skrip init kini hanya
   mengganti nama (idempoten) + bootstrap-db.sh.
+- 2026-10-19 — Animasi "Bayar → Struk" (`pay-receipt-animation.tsx/.css`):
+  tombol Bayar → pil hijau "Lunas" (centang tergambar) → kertas struk bergerigi
+  naik dari balik tombol, baris muncul berurutan, barcode hiasan deterministik.
+  Ketuk = lewati; prefers-reduced-motion dihormati. Diverifikasi frame
+  250–3200 ms di 390×844 dengan request order di-mock (tanpa tulis DB).

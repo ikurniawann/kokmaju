@@ -31,6 +31,7 @@ import {
 import { DEFAULT_POS_PAYMENT_METHODS, isFocPaymentMethod } from "@/lib/pos/payment-methods";
 import { formatPaymentMethodLabel } from "@/features/pos/reports/utils/transaction-labels";
 import { printThermalReceipt, type ReceiptPayload } from "@/components/pos/PrintReceipt";
+import { receiptFromPayload } from "@/lib/pos/receipt-animation";
 import {
   buildCategories,
   filterProducts,
@@ -134,6 +135,7 @@ export function MobileKasirApp({ cashierName, brandName }: { cashierName: string
   const [sale, setSale] = useState<KasirSale | null>(null);
   const [receipt, setReceipt] = useState<ReceiptPayload | null>(null);
   const [printing, setPrinting] = useState(false);
+  const [replayKey, setReplayKey] = useState(0);
   const [toastText, setToastText] = useState<string | null>(null);
   const [switchingStall, setSwitchingStall] = useState<string | null>(null);
 
@@ -261,7 +263,7 @@ export function MobileKasirApp({ cashierName, brandName }: { cashierName: string
       return;
     }
     const methodLabel = formatPaymentMethodLabel(option.method, { code: option.code, name: option.name });
-    setReceipt({
+    const payload: ReceiptPayload = {
       orderId: result.orderId,
       orderNumber: result.orderNumber,
       checkoutNumber: result.checkoutNumber,
@@ -279,7 +281,9 @@ export function MobileKasirApp({ cashierName, brandName }: { cashierName: string
       discountAmount: 0,
       taxAmount: bill.tax_amount,
       chargesBreakdown: bill.breakdown,
-    });
+    };
+    setReceipt(payload);
+    setReplayKey((key) => key + 1);
     setSale({
       orderNumber: result.checkoutNumber || result.orderNumber || null,
       queueNumber: result.queueNumber ?? null,
@@ -288,6 +292,8 @@ export function MobileKasirApp({ cashierName, brandName }: { cashierName: string
       methodLabel,
       itemCount: totalItems,
       customerName: customerName.trim(),
+      paidAt: new Date(),
+      receipt: receiptFromPayload(payload, methodLabel),
     });
     setPayOpen(false);
     setCartOpen(false);
@@ -299,6 +305,8 @@ export function MobileKasirApp({ cashierName, brandName }: { cashierName: string
 
   async function printReceipt() {
     if (!receipt) return;
+    // Putar ulang animasi "Bayar → Struk" sambil struk dikirim ke printer.
+    setReplayKey((key) => key + 1);
     setPrinting(true);
     try {
       await printThermalReceipt(receipt, "CUSTOMER");
@@ -395,6 +403,10 @@ export function MobileKasirApp({ cashierName, brandName }: { cashierName: string
     return (
       <KasirSuccess
         sale={sale}
+        brandLine={`GEROBAK ${brandName.toUpperCase()}`}
+        stallName={stall?.active?.name ?? null}
+        cashierName={cashierName}
+        replayKey={replayKey}
         printing={printing}
         onPrint={() => void printReceipt()}
         onNewSale={() => {

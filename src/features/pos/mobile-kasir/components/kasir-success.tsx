@@ -1,7 +1,9 @@
 "use client";
 
-import { CheckCircle2, Printer, Plus } from "lucide-react";
+import { Printer, Plus } from "lucide-react";
+import type { AnimatedReceipt } from "@/lib/pos/receipt-animation";
 import { formatRupiah } from "@/lib/table-order/menu";
+import { PayReceiptAnimation } from "./pay-receipt-animation";
 
 export type KasirSale = {
   orderNumber: string | null;
@@ -11,65 +13,69 @@ export type KasirSale = {
   methodLabel: string;
   itemCount: number;
   customerName: string;
+  paidAt: Date;
+  receipt: AnimatedReceipt;
 };
 
-/** Layar setelah bayar: nomor antrian besar, kembalian, cetak struk, transaksi baru. */
+/**
+ * Layar setelah bayar: animasi "Bayar → Struk" (diputar ulang tiap Cetak
+ * struk lewat `replayKey`), kembalian, cetak struk, transaksi baru.
+ */
 export function KasirSuccess({
   sale,
+  brandLine,
+  stallName,
+  cashierName,
+  replayKey,
   printing,
   onPrint,
   onNewSale,
 }: {
   sale: KasirSale;
+  brandLine: string;
+  stallName: string | null;
+  cashierName: string;
+  replayKey: number;
   printing: boolean;
   onPrint: () => void;
   onNewSale: () => void;
 }) {
   return (
-    <main className="flex min-h-dvh flex-col bg-gray-50 text-gray-900">
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-10">
-        <div className="flex flex-col items-center text-center">
-          <div className="flex size-20 items-center justify-center rounded-full bg-emerald-100">
-            <CheckCircle2 className="size-12 text-emerald-600" />
-          </div>
-          <h1 className="mt-4 text-xl font-black">Pembayaran berhasil</h1>
-          <p className="mt-1 text-sm text-gray-500">
+    <main className="flex min-h-dvh flex-col bg-gray-100 text-gray-900">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-6">
+        <div className="text-center">
+          <h1 className="text-lg font-black">Pembayaran berhasil</h1>
+          <p className="mt-0.5 text-xs text-gray-500">
             {sale.itemCount} item · {sale.methodLabel}
             {sale.customerName ? ` · ${sale.customerName}` : ""}
           </p>
         </div>
 
-        {(sale.queueNumber || sale.orderNumber) && (
-          <div className="mt-6 rounded-3xl bg-primary px-5 py-6 text-center text-white shadow-lg shadow-black/10">
-            <div className="text-xs font-semibold uppercase tracking-widest text-white/75">
-              {sale.queueNumber ? "Nomor antrian" : "Nomor pesanan"}
-            </div>
-            <div className="mt-1 text-5xl font-black tracking-tight">{sale.queueNumber || sale.orderNumber}</div>
-            {sale.queueNumber && sale.orderNumber && (
-              <div className="mt-2 text-xs text-white/75">{sale.orderNumber}</div>
-            )}
+        <div className="mt-4">
+          <PayReceiptAnimation
+            key={replayKey}
+            receipt={sale.receipt}
+            brandLine={brandLine}
+            subLine={stallName}
+            cashierName={cashierName}
+            paidAt={sale.paidAt}
+            payLabel={`Bayar ${formatRupiah(sale.total)}`}
+          />
+        </div>
+
+        {sale.change > 0 && (
+          <div className="mt-5 flex items-center justify-between rounded-2xl bg-emerald-50 px-4 py-3 text-emerald-800 ring-1 ring-emerald-100">
+            <span className="text-sm font-semibold">Kembalian</span>
+            <span className="text-xl font-black">{formatRupiah(sale.change)}</span>
           </div>
         )}
 
-        <dl className="mt-5 space-y-2 rounded-2xl bg-white p-4 text-sm shadow-sm ring-1 ring-gray-100">
-          <div className="flex justify-between">
-            <dt className="text-gray-600">Total</dt>
-            <dd className="font-bold">{formatRupiah(sale.total)}</dd>
-          </div>
-          {sale.change > 0 && (
-            <div className="flex justify-between text-base">
-              <dt className="font-semibold text-emerald-700">Kembalian</dt>
-              <dd className="font-black text-emerald-700">{formatRupiah(sale.change)}</dd>
-            </div>
-          )}
-        </dl>
-
-        <div className="mt-auto space-y-3 pt-8">
+        <div className="mt-auto space-y-3 pt-6">
           <button
             type="button"
             onClick={onPrint}
             disabled={printing}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-primary text-sm font-bold text-primary disabled:opacity-60"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border-2 border-primary bg-white text-sm font-bold text-primary disabled:opacity-60"
           >
             <Printer className="size-4" /> {printing ? "Mencetak…" : "Cetak struk"}
           </button>

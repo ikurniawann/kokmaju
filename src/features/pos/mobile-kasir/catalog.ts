@@ -193,3 +193,22 @@ export function kasirPaymentOptions(
       return [];
     });
 }
+
+/**
+ * Lebar batang barcode hiasan struk animasi (1–3 px), deterministik dari
+ * nomor order supaya struk yang sama selalu tampil sama. Bukan barcode
+ * yang bisa dipindai — hanya ornamen layar.
+ */
+export function receiptBarcodeBars(seed: string, count = 44): number[] {
+  let hash = 2166136261;
+  for (const char of seed || "KOMA") {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619) >>> 0;
+  }
+  const bars: number[] = [];
+  for (let i = 0; i < count; i++) {
+    hash = (Math.imul(hash ^ (hash >>> 15), 2246822507) + i) >>> 0;
+    bars.push(1 + (hash % 3));
+  }
+  return bars;
+}
