@@ -32,7 +32,7 @@ export interface Product {
   name: string;
   description?: string;
   category_id?: string;
-  category?: { name: string };
+  category?: { name: string; display_order?: number | null };
   base_price: number;
   cost_price?: number;
   is_active: boolean;

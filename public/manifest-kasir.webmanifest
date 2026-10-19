@@ -1,0 +1,17 @@
+{
+  "name": "Kasir KoMa",
+  "short_name": "Kasir KoMa",
+  "description": "Kasir mobile Gerobak KoMa — jual, terima tunai/QRIS, cetak struk dari HP",
+  "start_url": "/pos/kasir",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#d8301d",
+  "lang": "id",
+  "icons": [
+    { "src": "/app-icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

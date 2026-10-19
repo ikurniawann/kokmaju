@@ -13,6 +13,7 @@ const PUBLIC_AUTH_PREFIXES = [
   "/logo.png",
   "/favicon.svg",
   "/manifest-pos.webmanifest",
+  "/manifest-kasir.webmanifest",
   // Service worker POS (public/sw.js) — didaftarkan dari halaman kasir; registrasi
   // harus dapat berkas JS-nya langsung, bukan redirect ke /login.
   "/sw.js",
@@ -150,6 +151,10 @@ export async function updateSession(request: NextRequest) {
     // Deep link (mis. "Buatkan Pesanan" dari WA) → kembali ke halaman itu setelah login.
     if (pathname.startsWith("/dashboard") && !url.searchParams.has("redirect")) {
       url.searchParams.set("redirect", `${pathname}${request.nextUrl.search}`);
+    }
+    // Kasir mobile (bookmark /kasir di HP kasir) → kembali ke kasir setelah login.
+    if ((pathname === "/kasir" || pathname.startsWith("/pos/kasir")) && !url.searchParams.has("redirect")) {
+      url.searchParams.set("redirect", "/pos/kasir");
     }
     return NextResponse.redirect(url);
   }

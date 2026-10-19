@@ -18,6 +18,12 @@ describe("isPublicAuthPath", () => {
     expect(isPublicAuthPath("/app-icons/icon-192.png")).toBe(true);
   });
 
+  it("kasir mobile: manifest PWA publik, halamannya tetap wajib login", () => {
+    expect(isPublicAuthPath("/manifest-kasir.webmanifest")).toBe(true);
+    expect(isPublicAuthPath("/pos/kasir")).toBe(false);
+    expect(isPublicAuthPath("/kasir")).toBe(false);
+  });
+
   it("allows the GoBiz webhook receiver (token in path) but not its settings API", () => {
     expect(isPublicAuthPath("/api/integrations/gobiz/webhook/abc123")).toBe(true);
     expect(isPublicAuthPath("/api/public/gofood-image/abc.jpg")).toBe(true);

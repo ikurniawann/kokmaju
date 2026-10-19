@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
       .from('pos_products')
       .select(`
         *,
-        category:pos_categories(name),
+        category:pos_categories(name, display_order),
         variants:pos_product_variants(*),
         skus:pos_product_skus(*),
         channels:product_channels(channel_code, is_distributed),

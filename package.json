@@ -34,6 +34,8 @@
     "db:seed:items-product-categories": "node database/seeders/items-product-categories.js",
     "db:seed:items-raw-materials": "node database/seeders/items-raw-materials.js",
     "db:seed:items-raw-materials-bcdcoffee": "node database/seeders/items-raw-materials-bcdcoffee.js",
+    "db:seed:kokmaju-demo-menu": "node database/seeders/kokmaju-demo-menu.js",
+    "db:seed:kokmaju-kasir": "node database/seeders/kokmaju-kasir-users.js",
     "db:seed:bcdcoffee-pos-stall": "node database/seeders/bcdcoffee-pos-product-stall.js",
     "db:seed:bcdcoffee-superadmin-stalls": "node database/seeders/bcdcoffee-superadmin-all-stalls.js",
     "db:seed:bcdcoffee-hris": "node database/seeders/bcdcoffee-demo-hris.js",

@@ -55,7 +55,9 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const redirect = params.get("redirect");
-    setRequestedRedirect(redirect?.startsWith("/dashboard") ? redirect : null);
+    setRequestedRedirect(
+      redirect?.startsWith("/dashboard") || redirect?.startsWith("/pos/kasir") ? redirect : null
+    );
     setRequestedModule(params.get("module"));
 
     setNow(new Date());
@@ -118,12 +120,16 @@ export default function LoginPage() {
       let target = requestedRedirect || "/arkiv-os";
       if (role !== "super_admin") {
         // Deep link staf yang diizinkan (akses tetap dijaga layout dashboard):
-        // Area Karyawan & layar pesanan self-order dari link WA "Buatkan Pesanan".
+        // Area Karyawan, layar pesanan self-order dari link WA "Buatkan Pesanan",
+        // dan kasir mobile (/kasir di HP kasir; akses POS dijaga halamannya).
         target =
           requestedRedirect?.startsWith("/dashboard/me") ||
-          requestedRedirect?.startsWith("/dashboard/pos/self-orders")
+          requestedRedirect?.startsWith("/dashboard/pos/self-orders") ||
+          requestedRedirect?.startsWith("/pos/kasir")
             ? requestedRedirect
-            : "/dashboard/me";
+            : role === "pos"
+              ? "/pos/kasir" // Kasir KoMa bekerja dari HP → langsung ke kasir mobile.
+              : "/dashboard/me";
       }
       setTransitioning(true);
       window.setTimeout(() => router.replace(target), 450);

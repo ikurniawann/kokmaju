@@ -56,6 +56,7 @@ deploying-dev · ready-for-qa · blocked · done).
 | [EPIC-051](./EPIC-051-tagihan-member.md) | Tagihan Member — Cicilan Order Member (POS → Operasional → Tagihan) | ready-for-qa | 2026-10-01 |
 | [EPIC-052](./EPIC-052-bcd-twin.md) | BCD Twin — Visual 3D Coffee Shop per Divisi (live + mode demo) | ready-for-qa | 2026-10-11 |
 | [EPIC-053](./EPIC-053-aplikasi-pelanggan-pwa-pickup.md) | Aplikasi Pelanggan (PWA) + Pickup Terjadwal (bayar dulu, pilih jam ambil) | ready-for-qa | 2026-10-11 |
+| [EPIC-054](./EPIC-054-kasir-mobile-koma.md) | Kasir Mobile KoMa (POS di HP kasir, gaya self-order) | ready-for-qa | 2026-10-19 |
 
 Aturan:
 - Epic + registry ini adalah sumber kebenaran status pekerjaan (canonical).
