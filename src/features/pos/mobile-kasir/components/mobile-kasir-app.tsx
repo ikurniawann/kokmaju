@@ -227,11 +227,10 @@ export function MobileKasirApp({ cashierName, brandName }: { cashierName: string
   const paymentOptions = useMemo(() => {
     const source = methodsQuery.data?.length ? methodsQuery.data : DEFAULT_POS_PAYMENT_METHODS;
     const options = kasirPaymentOptions(source, {
-      staticQrisAvailable: Boolean(staticQrisImageUrl),
       isFoc: (code, name) => isFocPaymentMethod(code, name),
     });
     return options.length ? options : [FALLBACK_CASH];
-  }, [methodsQuery.data, staticQrisImageUrl]);
+  }, [methodsQuery.data]);
 
   const { checkout, submitting } = usePosCheckout();
   const blockedReason =

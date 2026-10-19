@@ -19,8 +19,9 @@ penggunanya **kasir** dan transaksinya langsung lunas lewat checkout kasir.
 - Referensi UI: self-order `poskopi.reddie.id/table-order/WIT-OFFICE-BDG`, branding KoMa.
 - Rute layar penuh `/kasir` (alamat lama `/pos/kasir` dialihkan), di luar layout dashboard
   (tanpa sidebar), gerbang akses = gerbang layout POS (menu IAM `pos*`).
-- Metode bayar di HP: Tunai (keypad + nominal cepat + kembalian), QRIS Statis
-  (tampilkan QR, kasir konfirmasi), non-tunai manual (EDC/transfer). QRIS
+- Metode bayar di HP: Tunai (keypad + nominal cepat + kembalian), **QRIS tanpa
+  payment gateway** (kode `static_qris`, nama "QRIS": pelanggan scan QRIS KoMa,
+  kasir konfirmasi; gambar QR opsional), non-tunai manual (EDC/transfer). QRIS
   dinamis, ARK Coin, NFC, gift card, FOC tetap di kasir desktop.
 - Role `pos` (POS Cashier) login → langsung ke `/kasir`. Akun utama
   `kasir@kokmaju.id` (stall Gerobak 1).
@@ -48,7 +49,8 @@ penggunanya **kasir** dan transaksinya langsung lunas lewat checkout kasir.
 - [x] Seeder menu contoh `kokmaju-demo-menu.js` & akun `kokmaju-kasir-users.js`
 - [x] Animasi "Bayar → Struk" di layar sukses (referensi reel PathLink "Pay → Receipt"), diputar ulang tiap Cetak struk
 - [ ] Ganti menu contoh dengan menu & harga asli KoMa
-- [ ] Atur gambar QRIS statis (Settings → Payment Gateways) bila dipakai
+- [x] Metode QRIS manual tanpa gateway (selalu tampil)
+- [ ] (Opsional) unggah gambar QRIS di Settings → Payment Gateways agar QR tampil di HP kasir
 - [ ] Tinjau pajak bawaan 10% (POS → Billing) untuk gerobak
 
 ## Acceptance Criteria
@@ -84,3 +86,9 @@ penggunanya **kasir** dan transaksinya langsung lunas lewat checkout kasir.
   password dari owner). Alamat utama dipindah ke `/kasir` sesuai permintaan;
   `/pos/kasir` redirect. Uji: login lewat halaman /login di viewport HP →
   mendarat di /kasir; /kasir tanpa sesi → /login?redirect=/kasir.
+- 2026-10-19 — Metode QRIS tanpa payment gateway: opsi `static_qris` di kasir
+  mobile tidak lagi menunggu gambar QRIS (ikon QR + instruksi bila belum ada);
+  master metode bayar: static_qris → "QRIS", qris (Xendit) → "QRIS Xendit".
+  Uji (order di-mock): payload payment_method=credit, code=static_qris,
+  name=QRIS, amount_paid = total; struk "Dibayar QRIS". Akuntansi memetakan
+  static_qris ke akun QRIS (accounting-amounts.ts).

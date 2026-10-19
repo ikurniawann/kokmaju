@@ -180,9 +180,14 @@ function PaymentBody({
               alt="QRIS"
               className="mx-auto w-full max-w-[280px] rounded-2xl border border-gray-200 bg-white p-2"
             />
-          ) : null}
-          <p className="mt-2 text-xs leading-relaxed text-gray-600">
-            Tunjukkan QR ke pelanggan. Tekan konfirmasi setelah notifikasi dana {formatRupiah(total)} masuk.
+          ) : (
+            <div className="mx-auto flex size-24 items-center justify-center rounded-3xl bg-primary/10 text-primary">
+              <QrCode className="size-12" />
+            </div>
+          )}
+          <p className="mt-3 text-xs leading-relaxed text-gray-600">
+            {staticQrisImageUrl ? "Tunjukkan QR ini ke pelanggan." : "Minta pelanggan scan QRIS KoMa di gerobak."} Pastikan
+            notifikasi dana <b>{formatRupiah(total)}</b> sudah masuk, lalu tekan konfirmasi.
           </p>
         </div>
       )}

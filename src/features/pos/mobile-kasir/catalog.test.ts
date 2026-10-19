@@ -149,7 +149,7 @@ describe("kasirPaymentOptions", () => {
   const methods = [
     { code: "qris", name: "QRIS", handler: "qris", is_active: true, sort_order: 20 },
     { code: "cash", name: "Tunai", handler: "cash", is_active: true, sort_order: 10 },
-    { code: "static_qris", name: "QRIS Statis", handler: "credit", is_active: true, sort_order: 25 },
+    { code: "static_qris", name: "QRIS", handler: "credit", is_active: true, sort_order: 25 },
     { code: "credit_card", name: "Debit / EDC", handler: "credit", is_active: true, sort_order: 30 },
     { code: "ark_coin", name: "ARK Coin", handler: "ark_wallet", is_active: true, sort_order: 40 },
     { code: "foc", name: "FOC", handler: "credit", is_active: true, sort_order: 50 },
@@ -157,17 +157,17 @@ describe("kasirPaymentOptions", () => {
   ];
   const isFoc = (code: string) => code === "foc";
 
-  it("hanya tunai, Static QRIS, dan non-tunai manual — terurut", () => {
-    expect(kasirPaymentOptions(methods, { staticQrisAvailable: true, isFoc }).map((m) => [m.code, m.kind])).toEqual([
+  it("hanya tunai, QRIS manual, dan non-tunai manual — terurut, QRIS gateway tidak ikut", () => {
+    expect(kasirPaymentOptions(methods, { isFoc }).map((m) => [m.code, m.kind])).toEqual([
       ["cash", "cash"],
       ["static_qris", "static_qris"],
       ["credit_card", "manual"],
     ]);
   });
 
-  it("Static QRIS disembunyikan bila gambar QRIS belum diatur", () => {
-    const codes = kasirPaymentOptions(methods, { staticQrisAvailable: false, isFoc }).map((m) => m.code);
-    expect(codes).not.toContain("static_qris");
+  it("QRIS manual dicatat sebagai non-tunai (bukan QRIS gateway) dengan nama dari master", () => {
+    const qris = kasirPaymentOptions(methods, { isFoc }).find((m) => m.code === "static_qris");
+    expect(qris).toEqual({ code: "static_qris", name: "QRIS", method: "credit_card", kind: "static_qris" });
   });
 });
 

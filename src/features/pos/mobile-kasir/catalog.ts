@@ -167,14 +167,16 @@ type CatalogPaymentMethod = {
 
 /**
  * Metode bayar kasir mobile dari master Metode Bayar. Hanya alur yang bisa
- * diselesaikan di HP tanpa perangkat/flow tambahan: tunai, Static QRIS
- * (pelanggan scan, kasir konfirmasi), dan metode manual non-tunai (EDC,
- * transfer). QRIS dinamis Xendit, ARK Coin, gelang NFC, gift card, dan FOC
- * (wajib PIN supervisor) tetap di kasir desktop.
+ * diselesaikan di HP tanpa perangkat/flow tambahan: tunai, QRIS manual (kode
+ * `static_qris` — pelanggan scan QRIS venue di standee/layar, kasir
+ * konfirmasi; TANPA payment gateway, tetap muncul walau gambar QRIS belum
+ * diunggah — owner 2026-10-19), dan metode manual non-tunai (EDC, transfer).
+ * QRIS dinamis Xendit, ARK Coin, gelang NFC, gift card, dan FOC (wajib PIN
+ * supervisor) tetap di kasir desktop.
  */
 export function kasirPaymentOptions(
   methods: CatalogPaymentMethod[],
-  opts: { staticQrisAvailable: boolean; isFoc: (code: string, name: string) => boolean }
+  opts: { isFoc: (code: string, name: string) => boolean }
 ): KasirPaymentOption[] {
   return [...methods]
     .filter((method) => method.is_active)
@@ -182,9 +184,7 @@ export function kasirPaymentOptions(
     .flatMap((method): KasirPaymentOption[] => {
       if (opts.isFoc(method.code, method.name)) return [];
       if (method.code === "static_qris") {
-        return opts.staticQrisAvailable
-          ? [{ code: method.code, name: method.name, method: "credit_card", kind: "static_qris" }]
-          : [];
+        return [{ code: method.code, name: method.name, method: "credit_card", kind: "static_qris" }];
       }
       if (method.handler === "cash") return [{ code: method.code, name: method.name, method: "cash", kind: "cash" }];
       if (method.handler === "credit") {
